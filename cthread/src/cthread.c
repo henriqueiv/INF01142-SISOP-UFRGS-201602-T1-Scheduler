@@ -8,6 +8,8 @@
 
 #include "cthread.h"
 
+#define CCREATE_ERROR -1
+
 int ccreate (void *(*start)(void *), void *arg) {
     pthread_t thread;
     pthread_attr_t attr_t;
@@ -18,11 +20,15 @@ int ccreate (void *(*start)(void *), void *arg) {
     tcb.state = CREATION;
     tcb.tid = generateThreadId();
     tcb.ticket = generateTicket();
-    getcontext(&tcb.context);
-    
-    addThreadToReadyQueue(&tcb);
-    
-    return tcb.tid;
+    if (getcontext(&tcb.context) == 0) {
+        if (addThreadToReadyQueue(&tcb) == 0) {
+            return tcb.tid;
+        } else {
+            return CCREATE_ERROR;
+        }
+    } else {
+        return CCREATE_ERROR;
+    }
 }
 
 int cyield() {

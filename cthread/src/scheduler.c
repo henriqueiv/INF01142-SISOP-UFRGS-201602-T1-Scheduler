@@ -41,6 +41,6 @@ int generateThreadId() {
 /*!
  @brief Adiciona um TCB a fila de aptos
  */
-void addThreadToReadyQueue(TCB_t* thread) {
-    InsertAfterIteratorFila2(ready, (void*) thread);
+int addThreadToReadyQueue(TCB_t* thread) {
+    return InsertAfterIteratorFila2(ready, (void*) thread);
 }

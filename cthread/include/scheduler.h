@@ -22,6 +22,6 @@ int generateThreadId();
 
 int generateTicket();
 
-void addThreadToReadyQueue(TCB_t* thread);
+int addThreadToReadyQueue(TCB_t* thread);
 
 #endif /* scheduler_h */
