@@ -26,5 +26,4 @@ void test0() {
     } else {
     
     }
-    
 }
