@@ -52,6 +52,7 @@
 		62EEAB0A1D8AFD1900E16610 = {
 			isa = PBXGroup;
 			children = (
+				62EEAB2D1D8B0FFA00E16610 /* README.md */,
 				62EEAB151D8AFD1A00E16610 /* cthread */,
 				62EEAB141D8AFD1A00E16610 /* Products */,
 			);
@@ -76,7 +77,6 @@
 				62EEAB251D8AFF6600E16610 /* makefile */,
 				62EEAB211D8AFF0700E16610 /* src */,
 				62EEAB231D8AFF1100E16610 /* teste */,
-				62EEAB2D1D8B0FFA00E16610 /* README.md */,
 			);
 			path = cthread;
 			sourceTree = "<group>";
