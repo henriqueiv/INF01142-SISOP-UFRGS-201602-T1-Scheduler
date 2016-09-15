@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52954F9F1D8B14AB00F7E664 /* support.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 52954F9E1D8B14AB00F7E664 /* support.o */; };
 		62EEAB171D8AFD1A00E16610 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB161D8AFD1A00E16610 /* main.c */; };
 		62EEAB261D8AFF6600E16610 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB251D8AFF6600E16610 /* makefile */; };
 		62EEAB291D8B087F00E16610 /* cthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB281D8B087F00E16610 /* cthread.c */; };
@@ -27,6 +28,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		52954F9E1D8B14AB00F7E664 /* support.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = support.o; sourceTree = "<group>"; };
+		52954FA01D8B14CF00F7E664 /* support.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		62EEAB131D8AFD1A00E16610 /* cthread */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cthread; sourceTree = BUILT_PRODUCTS_DIR; };
 		62EEAB161D8AFD1A00E16610 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		62EEAB1D1D8AFD4C00E16610 /* cthread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cthread.h; sourceTree = "<group>"; };
@@ -43,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52954F9F1D8B14AB00F7E664 /* support.o in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				62EEAB1D1D8AFD4C00E16610 /* cthread.h */,
+				52954FA01D8B14CF00F7E664 /* support.h */,
 				62EEAB271D8B001100E16610 /* cdata.h */,
 			);
 			path = include;
@@ -93,6 +98,7 @@
 		62EEAB1F1D8AFEFD00E16610 /* bin */ = {
 			isa = PBXGroup;
 			children = (
+				52954F9E1D8B14AB00F7E664 /* support.o */,
 			);
 			path = bin;
 			sourceTree = "<group>";
@@ -319,6 +325,7 @@
 				62EEAB1C1D8AFD1A00E16610 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
