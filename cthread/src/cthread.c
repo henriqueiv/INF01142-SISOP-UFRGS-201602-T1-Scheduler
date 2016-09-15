@@ -7,10 +7,11 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "cthread.h"
 
 int ccreate (void *(*start)(void *), void *arg) {
-    return 1;
+    return -1;
 }
 
 int cyield() {
@@ -18,21 +19,27 @@ int cyield() {
 }
 
 int cjoin(int tid) {
-    return 1;
+    return -1;
 }
 
 int csem_init (csem_t *sem, int count) {
-    return 1;
+    return -1;
 }
 
 int cwait (csem_t *sem) {
-    return 1;
+    return -1;
 }
 
 int csignal (csem_t *sem) {
-    return 1;
+    return -1;
 }
 
 int cidentify (char *name, int size) {
-    return 1;
+    const char* strNames = "Henrique Valcanaia - 240501\nPietro Degrazia - 243666\0";
+    if (size >= strlen(strNames)) {
+        strcpy(name, strNames);
+        return 0;
+    } else {
+        return -1;
+    }
 }
