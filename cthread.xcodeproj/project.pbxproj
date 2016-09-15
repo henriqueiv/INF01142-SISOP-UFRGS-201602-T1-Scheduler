@@ -11,6 +11,7 @@
 		62EEAB261D8AFF6600E16610 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB251D8AFF6600E16610 /* makefile */; };
 		62EEAB291D8B087F00E16610 /* cthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB281D8B087F00E16610 /* cthread.c */; };
 		62EEAB2C1D8B0F0300E16610 /* test_ccreate.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB2A1D8B0F0300E16610 /* test_ccreate.c */; };
+		62EEAB2E1D8B0FFA00E16610 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB2D1D8B0FFA00E16610 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,6 +35,7 @@
 		62EEAB281D8B087F00E16610 /* cthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cthread.c; sourceTree = "<group>"; };
 		62EEAB2A1D8B0F0300E16610 /* test_ccreate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_ccreate.c; sourceTree = "<group>"; };
 		62EEAB2B1D8B0F0300E16610 /* test_ccreate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_ccreate.h; sourceTree = "<group>"; };
+		62EEAB2D1D8B0FFA00E16610 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				62EEAB251D8AFF6600E16610 /* makefile */,
 				62EEAB211D8AFF0700E16610 /* src */,
 				62EEAB231D8AFF1100E16610 /* teste */,
+				62EEAB2D1D8B0FFA00E16610 /* README.md */,
 			);
 			path = cthread;
 			sourceTree = "<group>";
@@ -185,6 +188,7 @@
 			files = (
 				62EEAB291D8B087F00E16610 /* cthread.c in Sources */,
 				62EEAB2C1D8B0F0300E16610 /* test_ccreate.c in Sources */,
+				62EEAB2E1D8B0FFA00E16610 /* README.md in Sources */,
 				62EEAB261D8AFF6600E16610 /* makefile in Sources */,
 				62EEAB171D8AFD1A00E16610 /* main.c in Sources */,
 			);
