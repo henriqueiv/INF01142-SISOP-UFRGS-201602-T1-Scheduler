@@ -10,11 +10,18 @@
 #define scheduler_h
 
 #include "support.h"
+#include "cdata.h"
 
 /*!
  @brief Usada para selecionar o próximo processo a ir para a CPU
  @return Retorna o tid da thread que ganhará a CPU. Em caso de não existir nenhuma thread para ser executada retornará SCHEDULE_ERROR(-1).
  */
 int schedule();
+
+int generateThreadId();
+
+int generateTicket();
+
+void addThreadToReadyQueue(TCB_t* thread);
 
 #endif /* scheduler_h */

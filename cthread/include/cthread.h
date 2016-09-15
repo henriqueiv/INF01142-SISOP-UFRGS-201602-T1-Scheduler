@@ -12,13 +12,19 @@
 #define CYIELD_SUCCESS 0
 #define CYIELD_ERROR -1
 
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ucontext.h>
+#include "cdata.h"
+#include "scheduler.h"
+
 //typedef int CCREATE_STATUS;
 
 enum CCREATE_STATUS {
     ERROR = -1
 };
 
-#include "cdata.h"
 
 /*!
  @brief Efetua cedencia voluntária de CPU
@@ -61,7 +67,7 @@ int cjoin(int tid);
 
 
 /*!
- @param sem ponteiro para uma variável do tipo csem_t. Aponta para uma estrutura de dados que representa a variável semáforo. 
+ @param sem ponteiro para uma variável do tipo csem_t. Aponta para uma estrutura de dados que representa a variável semáforo.
  @param count valor a ser usado na inicialização do semáforo. Representa a quantidade de recursos controlador pelo semáforo.
  @return Quando executada corretamente: retorna 0 (zero) Caso contrário, retorna um valor negativo.
  */
@@ -74,7 +80,7 @@ int csem_init (csem_t *sem, int count);
 int cwait (csem_t *sem);
 
 /*!
- @param sem ponteiro para uma variável do tipo semáforo. 
+ @param sem ponteiro para uma variável do tipo semáforo.
  @return Quando executada corretamente retorna CSIGNAL_SUCCESS (0 zero), caso contrário, retorna CSIGNAL_ERROR (um valor negativo)
  */
 int csignal (csem_t *sem);
@@ -83,7 +89,7 @@ int csignal (csem_t *sem);
  @param name ponteiro para uma área de memória onde deve ser escrito um string que contém os nomes dos componentes do grupo e seus números de cartão. Deve ser uma linha por componente.
  @param size quantidade máxima de caracteres que podem ser copiados para o string de identificação dos componentes do grupo.
  @return Quando executada corretamente retorna CIDENTIFY_SUCCESS (0 zero), caso contrário, retorna CIDENTIFY_ERROR(um valor negativo)
-*/
+ */
 int cidentify (char *name, int size);
 
 

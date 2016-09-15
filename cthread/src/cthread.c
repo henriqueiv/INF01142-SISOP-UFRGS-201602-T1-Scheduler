@@ -6,12 +6,23 @@
 //  Copyright © 2016 Henrique Valcanaia. All rights reserved.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "cthread.h"
 
 int ccreate (void *(*start)(void *), void *arg) {
-    return -1;
+    pthread_t thread;
+    pthread_attr_t attr_t;
+    
+    pthread_create(&thread, &attr_t, start, arg);
+    
+    TCB_t tcb;
+    tcb.state = CREATION;
+    tcb.tid = generateThreadId();
+    tcb.ticket = generateTicket();
+    getcontext(&tcb.context);
+    
+    addThreadToReadyQueue(&tcb);
+    
+    return tcb.tid;
 }
 
 int cyield() {

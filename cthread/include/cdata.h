@@ -10,7 +10,25 @@
 #define cdata_h
 #include "support.h"
 
-typedef struct s_TCB { int tid;
+enum THREAD_STATE {
+    CREATION = 0,
+    READY = 1,
+    EXEC = 2,
+    BLOCKED = 3,
+    FINISH = 4
+};
+
+/*!
+ @struct s_TCB
+ @abstract Struct que representa um TCB(Thread Control Block)
+ @field tid Thread id
+ @field state Estado atual da thread (THREAD_STATE)
+ @field ticket Ticket sorteado pelo escalonador
+ @field context ucontext_t
+ @discussion Struct utilizada para definicao do TCB. É importante ressaltar que o tipo ucontex_t NÃO é mais utilizado em versões recentes de UNIX/POSIX.
+ */
+typedef struct s_TCB {
+    int tid;
     int state;
     int ticket;
     ucontext_t context;
