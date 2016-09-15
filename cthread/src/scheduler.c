@@ -32,15 +32,28 @@ int generateTicket() {
     return ticket;
 }
 
-
+/*!
+ @brief Gera um novo identificador de thread
+ @discussion Este identificador é sequencial e não é reutilizado. Use com sabedoria.
+ */
 int generateThreadId() {
     threadId++;
     return threadId;
 }
 
 /*!
+ @brief Adiciona um TCB a uma fila
+ */
+int addThreadToQueue(TCB_t* thread, PFILA2 queue) {
+    int result = AppendFila2(queue, (void*) thread);
+    return result;
+}
+
+/*!
  @brief Adiciona um TCB a fila de aptos
  */
 int addThreadToReadyQueue(TCB_t* thread) {
-    return InsertAfterIteratorFila2(ready, (void*) thread);
+    int result = addThreadToQueue(thread, ready);
+    return result;
 }
+

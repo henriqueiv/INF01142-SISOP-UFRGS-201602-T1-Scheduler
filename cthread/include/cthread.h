@@ -12,12 +12,12 @@
 #define CYIELD_SUCCESS 0
 #define CYIELD_ERROR -1
 
+#include "cdata.h"
+#include "scheduler.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ucontext.h>
-#include "cdata.h"
-#include "scheduler.h"
 
 //typedef int CCREATE_STATUS;
 
