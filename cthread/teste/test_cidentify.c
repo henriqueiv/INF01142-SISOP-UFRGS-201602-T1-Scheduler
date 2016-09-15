@@ -9,7 +9,14 @@
 #include "test_cidentify.h"
 #include "cthread.h"
 
+#define NAMES_BUFFER 60
+
 void test() {
-    char *nomes;
-    int result = cidentify(nomes, 30);
+    char *nomes = (char*) malloc(NAMES_BUFFER *(sizeof(char)));
+    int result = cidentify(nomes, NAMES_BUFFER);
+    if (result == -1) {
+        printf("Erro ao copiar as coisinhas");
+    } else {
+        printf("%s", nomes);
+    }
 }
