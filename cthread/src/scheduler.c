@@ -10,7 +10,7 @@
 
 PFILA2 ready;
 PFILA2 exec;
-PFILA2 waiting;
+PFILA2 blocked;
 
 /*!
  @brief Partiremos do 1 pois a 0 será a main
@@ -18,8 +18,25 @@ PFILA2 waiting;
 int threadId = 1;
 
 int schedule() {
-    int tid = -1;
-    return tid;
+    TCB_t nextThread;
+    if (getNextThread(&nextThread) == 0) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int getNextThread(TCB_t* nextThread) {
+    int randomTicket = generateTicket();
+    if (getThreadClosestToTicket(randomTicket, nextThread) == 0) {
+        return  0;
+    } else {
+        return -1;
+    }
+}
+
+int getThreadClosestToTicket() {
+    
 }
 
 /*!

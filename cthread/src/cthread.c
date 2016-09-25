@@ -18,7 +18,13 @@ int ccreate (void *(*start)(void *), void *arg) {
     
     TCB_t tcb;
     tcb.state = CREATION;
-    tcb.tid = generateThreadId();
+#ifdef __APPLE__
+    pthread_threadid_np(thread, &tcb.tid);
+#else
+#ifdef unix
+    
+#endif
+#endif
     tcb.ticket = generateTicket();
     if (getcontext(&tcb.context) == 0) {
         if (addThreadToReadyQueue(&tcb) == 0) {
