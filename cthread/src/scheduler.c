@@ -8,6 +8,8 @@
 
 #include "scheduler.h"
 
+TCB_t* running_thread;
+
 PFILA2 ready;
 PFILA2 exec;
 PFILA2 blocked;
@@ -74,3 +76,39 @@ int addThreadToReadyQueue(TCB_t* thread) {
     return result;
 }
 
+/*!
+ @brief Adiciona um TCB a fila de bloqueados
+ */
+int addThreadToBlockedQueue(TCB_t* thread) {
+    int result = addThreadToQueue(thread, blocked);
+    return result;
+}
+
+int findTid(int tid, PFILA2 queue) {
+    struct sFilaNode2 *node = (struct sFilaNode2*) malloc(sizeof(struct sFilaNode2));
+    node = queue->first;
+    while (node != NULL) {
+        if (((TCB_t*) node)->tid == tid) {
+            return 1;
+        }
+        node = node->next;
+    }
+    
+    return 0;
+}
+
+int isReady(int tid) {
+    return findTid(tid, ready);
+}
+
+int isBlocked(int tid) {
+    return findTid(tid, blocked);
+}
+
+TCB_t* findThread(tid) {
+    
+}
+
+TCB_t* get_running_thread() {
+    return running_thread;
+}

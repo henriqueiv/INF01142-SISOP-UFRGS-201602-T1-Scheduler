@@ -39,4 +39,6 @@ typedef struct s_sem {
     PFILA2 fila; // ponteiro para uma fila de threads bloqueadas no semáforo
 } csem_t;
 
+struct TCB_t* join_list[999];
+
 #endif /* cdata_h */

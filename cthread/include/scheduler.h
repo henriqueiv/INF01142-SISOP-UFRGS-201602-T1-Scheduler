@@ -24,4 +24,12 @@ int generateTicket();
 
 int addThreadToReadyQueue(TCB_t* thread);
 
+int addThreadToBlockedQueue(TCB_t* thread);
+
+int isReady(int tid);
+
+int isBlocked(int tid);
+
+TCB_t* get_running_thread();
+
 #endif /* scheduler_h */

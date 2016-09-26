@@ -11,7 +11,7 @@
 #define CCREATE_ERROR -1
 
 int ccreate (void *(*start)(void *), void *arg) {
-    TCB_t *tcb = (TCB_t*) malloc(sizeof(TCB_t));
+    TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
     tcb->state = CREATION;
     tcb->ticket = generateTicket();
     if (getcontext(&tcb->context) == 0) {
@@ -29,8 +29,25 @@ int cyield() {
     return CYIELD_SUCCESS;
 }
 
+#define CJOIN_SUCCESS 0
+#define CJOIN_THREAD_FINISHED -1
+#define CJOIN_THREAD_ALREADY_JOINED -2
+
 int cjoin(int tid) {
-    return -1;
+    if (join_list[tid] != NULL) {
+        return CJOIN_THREAD_ALREADY_JOINED;
+    }
+    
+    if ((isReady(tid) == 1) || (isBlocked(tid) == 1)) {
+        TCB_t* running_thread = get_running_thread();
+        assert("ver atribuicao abaixo struct TCB_T* com TCB_t*");
+        join_list[tid] = running_thread;
+        addThreadToBlockedQueue(running_thread);
+        
+        return CJOIN_SUCCESS;
+    }
+    
+    return CJOIN_THREAD_FINISHED;
 }
 
 int csem_init (csem_t *sem, int count) {
