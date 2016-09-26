@@ -11,24 +11,12 @@
 #define CCREATE_ERROR -1
 
 int ccreate (void *(*start)(void *), void *arg) {
-    pthread_t thread;
-    pthread_attr_t attr_t;
-    
-    pthread_create(&thread, &attr_t, start, arg);
-    
-    TCB_t tcb;
-    tcb.state = CREATION;
-#ifdef __APPLE__
-    pthread_threadid_np(thread, &tcb.tid);
-#else
-#ifdef unix
-    
-#endif
-#endif
-    tcb.ticket = generateTicket();
-    if (getcontext(&tcb.context) == 0) {
-        if (addThreadToReadyQueue(&tcb) == 0) {
-            return tcb.tid;
+    TCB_t *tcb = (TCB_t*) malloc(sizeof(TCB_t));
+    tcb->state = CREATION;
+    tcb->ticket = generateTicket();
+    if (getcontext(&tcb->context) == 0) {
+        if (addThreadToReadyQueue(tcb) == 0) {
+            return tcb->tid;
         } else {
             return CCREATE_ERROR;
         }
