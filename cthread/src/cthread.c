@@ -153,8 +153,11 @@ int ccreate (void *(*start)(void *), void *arg) {
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
     tcb->state = THREAD_STATE_CREATION;
     tcb->ticket = generate_ticket();
+    tcb->tid = generate_thread_id();
     if (getcontext(&tcb->context) == 0) {
+        makecontext(&(tcb->context), (void (*)(void)) start, 1, &arg);
         if (add_thread_to_ready_queue(tcb) == 0) {
+            setcontext(&tcb->context);
             return tcb->tid;
         } else {
             return CCREATE_ERROR;
