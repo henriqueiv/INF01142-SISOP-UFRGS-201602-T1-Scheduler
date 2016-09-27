@@ -12,9 +12,9 @@
 
 TCB_t* running_thread;
 
-PFILA2 ready;
-PFILA2 exec;
-PFILA2 blocked;
+FILA2 ready;
+FILA2 exec;
+FILA2 blocked;
 
 // -------------- AUX FUNC -------------
 
@@ -52,8 +52,8 @@ int generate_thread_id() {
 /*!
  @brief Adiciona um TCB a uma fila
  */
-int add_thread_to_queue(TCB_t* thread, PFILA2 queue) {
-    int result = AppendFila2(queue, (void*) thread);
+int add_thread_to_queue(TCB_t* thread, FILA2 queue) {
+    int result = AppendFila2(&queue, (void*) thread);
     return result;
 }
 
@@ -73,9 +73,9 @@ int add_thread_to_blocked_queue(TCB_t* thread) {
     return result;
 }
 
-int find_thread_with_id(int tid, PFILA2 queue) {
+int find_thread_with_id(int tid, FILA2 queue) {
     struct sFilaNode2 *node = (struct sFilaNode2*) malloc(sizeof(struct sFilaNode2));
-    node = queue->first;
+    node = queue.first;
     while (node != NULL) {
         if (((TCB_t*) node)->tid == tid) {
             return 1;
@@ -139,9 +139,9 @@ void create_main_context() {
 }
 
 void init_queues() {
-    CreateFila2(ready);
-    CreateFila2(exec);
-    CreateFila2(blocked);
+    CreateFila2(&ready);
+    CreateFila2(&exec);
+    CreateFila2(&blocked);
 }
 int ccreate (void *(*start)(void *), void *arg) {
     if (first_run) {

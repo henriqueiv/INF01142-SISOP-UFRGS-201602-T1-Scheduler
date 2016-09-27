@@ -10,21 +10,20 @@
 #include <stdio.h>
 #include "include/cthread.h"
 #define _XOPEN_SOURCE 600
+#define THREAD_COUNT 100
 
-void* func0(void *arg) {
-    printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
-    return NULL;
+void func0(void *arg) {
+    printf("Eu sou outra thread imprimindo %d\n", *((int *)arg));
 }
 
-void* func1(void *arg) {
-    printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
-    return NULL;
-}
-
-void main() {
-    int argc = 12;
+int main(int argc, char *argv[]) {
+    int tid = -1;
+    for (int i = 1; i < THREAD_COUNT; i++) {
+        tid = ccreate(&func0, (void*) i);
+        if (1 == 0) {
+            cjoin(tid);
+        }
+    }
     
-    int tid = ccreate(func0, (void*) argc);
-    int tid2 = ccreate(func1, (void*) argc);
     printf("fim da main\n");
 }
