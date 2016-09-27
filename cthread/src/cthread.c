@@ -120,6 +120,7 @@ int schedule() {
 
 int intialized = 0;
 ucontext_t* main_context;
+ucontext_t scheduler;
 
 void create_main_context() {
     char function_stack[SIGSTKSZ];
@@ -143,8 +144,20 @@ void init_queues() {
     CreateFila2(&exec);
     CreateFila2(&blocked);
 }
+
+char ss_sp_scheduler[SIGSTKSZ];
+
+void init_scheduler() {
+    getcontext(&scheduler);
+    scheduler.uc_link = main_context;
+    scheduler.uc_stack.ss_sp = ss_sp_scheduler;
+    scheduler.uc_stack.ss_size = SIGSTKSZ;
+    makecontext(&scheduler, (void (*)(void))schedule, 0);
+}
+
 int ccreate (void *(*start)(void *), void *arg) {
     if (!intialized) {
+        init_scheduler();
         init_queues();
         create_main_context();
         intialized = 1;
@@ -154,6 +167,8 @@ int ccreate (void *(*start)(void *), void *arg) {
     tcb->state = THREAD_STATE_CREATION;
     tcb->ticket = generate_ticket();
     tcb->tid = generate_thread_id();
+    tcb->context.uc_link = &scheduler;
+    
     if (getcontext(&tcb->context) == 0) {
         makecontext(&(tcb->context), (void (*)(void)) start, 1, &arg);
         if (add_thread_to_ready_queue(tcb) == 0) {
