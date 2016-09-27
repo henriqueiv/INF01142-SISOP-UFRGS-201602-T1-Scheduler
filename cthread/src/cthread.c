@@ -10,38 +10,23 @@
 
 #define CCREATE_ERROR -1
 
-// -------------- AUX FUNC -------------
-
 TCB_t* running_thread;
 
 PFILA2 ready;
 PFILA2 exec;
 PFILA2 blocked;
 
+// -------------- AUX FUNC -------------
+
 /*!
  @brief Partiremos do 1 pois a 0 será a main
  */
 int thread_id = 1;
 
-int schedule() {
-    TCB_t next_thread;
-    if (get_next_thread(&next_thread) == 0) {
-        return 0;
-    } else {
-        return -1;
-    }
-}
-
-int get_next_thread(TCB_t* next_thread) {
-    int randomTicket = generateTicket();
-    if (get_thread_closest_to_ticket(randomTicket, next_thread) == 0) {
-        return  0;
-    } else {
-        return -1;
-    }
-}
-
-int get_thread_closest_to_ticket() {
+/*!
+ @brief Partiremos do 1 pois a 0 será a main
+ */
+int get_thread_closest_to_ticket(int ticket, TCB_t *next_thread) {
     return 1;
 }
 
@@ -101,7 +86,7 @@ int find_thread_with_id(int tid, PFILA2 queue) {
     return 0;
 }
 
-int isReady(int tid) {
+int is_ready(int tid) {
     return find_thread_with_id(tid, ready);
 }
 
@@ -113,6 +98,23 @@ TCB_t* get_running_thread() {
     return running_thread;
 }
 
+int get_next_thread(TCB_t* next_thread) {
+    int randomTicket = generate_ticket();
+    if (get_thread_closest_to_ticket(randomTicket, next_thread) == 0) {
+        return  0;
+    } else {
+        return -1;
+    }
+}
+
+int schedule() {
+    TCB_t next_thread;
+    if (get_next_thread(&next_thread) == 0) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
 
 // ---------- CTHREAD ----------
 
@@ -131,7 +133,7 @@ void create_main_context() {
     TCB_t main;
     main.tid = 0;
     main.state = THREAD_STATE_READY;
-    main.ticket = generateTicket();
+    main.ticket = generate_ticket();
     getcontext(&(main.context));
     running_thread = &main;
 }
@@ -150,7 +152,7 @@ int ccreate (void *(*start)(void *), void *arg) {
 
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
     tcb->state = THREAD_STATE_CREATION;
-    tcb->ticket = generateTicket();
+    tcb->ticket = generate_ticket();
     if (getcontext(&tcb->context) == 0) {
         if (add_thread_to_ready_queue(tcb) == 0) {
             return tcb->tid;
@@ -175,9 +177,8 @@ int cjoin(int tid) {
         return CJOIN_THREAD_ALREADY_JOINED;
     }
     
-    if ((isReady(tid) == 1) || (isBlocked(tid) == 1)) {
+    if ((is_ready(tid) == 1) || (is_blocked(tid) == 1)) {
         TCB_t* running_thread = get_running_thread();
-        assert("ver atribuicao abaixo struct TCB_T* com TCB_t*");
         join_list[tid] = running_thread;
         add_thread_to_blocked_queue(running_thread);
         
