@@ -9,6 +9,7 @@
 #include "../include/cthread.h"
 
 #define CCREATE_ERROR -1
+#define MAIN_THREAD_ID 0
 
 TCB_t* running_thread;
 
@@ -48,8 +49,7 @@ int generate_ticket() {
  @discussion Este identificador é sequencial e não é reutilizado. Use com sabedoria.
  */
 int generate_thread_id() {
-    thread_id++;
-    return thread_id;
+    return thread_id++;
 }
 
 /*!
@@ -137,7 +137,7 @@ void create_default_stack() {
 }
 
 void create_main_tcb() {
-    main_thread.tid = 0;
+    main_thread.tid = MAIN_THREAD_ID;
     main_thread.state = THREAD_STATE_EXECUTING;
     main_thread.ticket = generate_ticket();
     
