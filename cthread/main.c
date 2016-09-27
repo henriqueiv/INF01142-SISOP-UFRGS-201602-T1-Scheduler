@@ -12,8 +12,9 @@
 #define _XOPEN_SOURCE 600
 #define THREAD_COUNT 2
 
-void* func0(void *arg) {
+void* func0(void* arg) {
     printf("Eu sou outra thread imprimindo %d\n", *((int *)arg));
+    return NULL;
 }
 
 int main(int argc, char *argv[]) {

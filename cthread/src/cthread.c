@@ -162,9 +162,8 @@ int ccreate (void *(*start)(void *), void *arg) {
     
     ucontext_t context;
     if (getcontext(&context) == 0) {
-        char tcb_stack[SIGSTKSZ];
         context.uc_link = &scheduler;
-        context.uc_stack.ss_sp = tcb_stack;
+        context.uc_stack.ss_sp = malloc(SIGSTKSZ);
         context.uc_stack.ss_size = SIGSTKSZ;
         makecontext(&context, (void (*)(void)) start, 1, arg);
         
@@ -186,15 +185,8 @@ int ccreate (void *(*start)(void *), void *arg) {
 int cyield() {
     printf("YIELD\n");
     printf("Running: %d\n", running_thread.tid);
-
-    // if (FirstFila2(&ready) != 0) {
-    //     printf("ERRO OU FILA READY VAZIA\n");
-    //     return CYIELD_ERROR;
-    // }
-
     swapcontext(&(running_thread.context), &scheduler);
-
-
+    
     return CYIELD_SUCCESS;
 }
 
