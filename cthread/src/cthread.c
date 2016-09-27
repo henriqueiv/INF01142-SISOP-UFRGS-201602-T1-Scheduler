@@ -225,11 +225,5 @@ int csignal (csem_t *sem) {
 }
 
 int cidentify (char *name, int size) {
-    const char* strNames = "Henrique Valcanaia - 240501\nPietro Degrazia - 243666\0";
-    if (size >= strlen(strNames)) {
-        strcpy(name, strNames);
-        return 0;
-    } else {
-        return -1;
-    }
+    printf("Henrique Valcanaia - 240501\nPietro Degrazia - 243666\n",);
 }
