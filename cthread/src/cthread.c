@@ -165,8 +165,8 @@ void init_scheduler() {
 int ccreate (void *(*start)(void *), void *arg) {
     if (!intialized) {
         create_default_stack();
-        create_main_tcb();
         init_scheduler();
+        create_main_tcb();
         init_queues();
         intialized = 1;
     }
