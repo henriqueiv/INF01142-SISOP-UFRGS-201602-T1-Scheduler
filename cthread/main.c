@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     int tid = -1;
     int i = 1;
     for (i = 1; i < THREAD_COUNT; i++) {
-        tid = ccreate(func0, (void*) i);
+        tid = ccreate(func0, (void*) &i);
         printf("main(%d) | tid(%d)\n", i, tid);
         cyield();
         printf("pos Yield\n");

@@ -9,10 +9,10 @@
 #include "../include/cthread.h"
 
 #define CCREATE_ERROR -1
-#define MAIN_THREAD_ID 0
 #define CYIELD_ERROR -1
+#define MAIN_THREAD_ID 0
 
-TCB_t running_thread;
+TCB_t* running_thread;
 
 FILA2 ready;
 FILA2 blocked;
@@ -117,15 +117,15 @@ void schedule() {
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
     printf("next_thread: tid(%d)\n",next_thread->tid);
     
-    running_thread = *next_thread;
+    running_thread = next_thread;
 
     DeleteAtIteratorFila2(&ready);
-    setcontext(&(next_thread->context));
+    setcontext(&(running_thread->context));
 }
 
 // ---------- CTHREAD ----------
 
-int intialized = 0;
+int initialized = 0;
 ucontext_t scheduler;
 TCB_t main_thread;
 
@@ -144,7 +144,7 @@ void create_main_tcb() {
     main_thread.ticket = generate_ticket();
     getcontext(&main_thread.context);
     
-    running_thread = main_thread;
+    running_thread = &main_thread;
 }
 
 void init_queues() {
@@ -153,11 +153,11 @@ void init_queues() {
 }
 
 int ccreate (void *(*start)(void *), void *arg) {
-    if (!intialized) {
+    if (!initialized) {
         init_scheduler();
         create_main_tcb();
         init_queues();
-        intialized = 1;
+        initialized = 1;
     }
     
     ucontext_t context;
@@ -185,8 +185,16 @@ int ccreate (void *(*start)(void *), void *arg) {
 
 int cyield() {
     printf("YIELD\n");
-    printf("Running: %d\n", running_thread.tid);
-    swapcontext(&(running_thread.context), &scheduler);
+    printf("Running: %d\n", running_thread->tid);
+    
+    TCB_t* thread;
+    thread = running_thread;
+    thread->state = THREAD_STATE_READY;
+    
+    running_thread = NULL;
+    
+    swapcontext(&thread->context, &scheduler);
+    
     return CYIELD_SUCCESS;
 }
 
@@ -201,7 +209,7 @@ int cjoin(int tid) {
     
     if ((is_ready(tid) == 1) || (is_blocked(tid) == 1)) {
         // join_list[tid] = &running_thread;
-        add_thread_to_blocked_queue(running_thread);
+        // add_thread_to_blocked_queue(running_thread);
         
         return CJOIN_SUCCESS;
     }
@@ -223,4 +231,5 @@ int csignal (csem_t *sem) {
 
 int cidentify (char *name, int size) {
     printf("Henrique Valcanaia - 240501\nPietro Degrazia - 243666\n");
+    return 1;
 }
