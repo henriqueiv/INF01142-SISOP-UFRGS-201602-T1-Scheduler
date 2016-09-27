@@ -55,15 +55,15 @@ int generate_thread_id() {
 /*!
  @brief Adiciona um TCB a uma fila
  */
-int add_thread_to_queue(TCB_t* thread, FILA2 queue) {
-    int result = AppendFila2(&queue, (void*) thread);
+int add_thread_to_queue(TCB_t thread, FILA2 queue) {
+    int result = AppendFila2(&queue, (void*) &thread);
     return result;
 }
 
 /*!
  @brief Adiciona um TCB a fila de aptos
  */
-int add_thread_to_ready_queue(TCB_t* thread) {
+int add_thread_to_ready_queue(TCB_t thread) {
     int result = add_thread_to_queue(thread, ready);
     return result;
 }
@@ -71,7 +71,7 @@ int add_thread_to_ready_queue(TCB_t* thread) {
 /*!
  @brief Adiciona um TCB a fila de bloqueados
  */
-int add_thread_to_blocked_queue(TCB_t* thread) {
+int add_thread_to_blocked_queue(TCB_t thread) {
     int result = add_thread_to_queue(thread, blocked);
     return result;
 }
@@ -171,14 +171,14 @@ int ccreate (void *(*start)(void *), void *arg) {
         intialized = 1;
     }
     
-    TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
-    tcb->state = THREAD_STATE_CREATION;
-    tcb->ticket = generate_ticket();
-    tcb->tid = generate_thread_id();
-    if (getcontext(&tcb->context) == 0) {
-        tcb->context.uc_link = &scheduler;
-        tcb->context.uc_stack = default_stack;
-        makecontext(&(tcb->context), (void (*)(void)) start, 1, &arg);
+    TCB_t tcb;
+    tcb.state = THREAD_STATE_CREATION;
+    tcb.ticket = generate_ticket();
+    tcb.tid = generate_thread_id();
+    if (getcontext(&(tcb.context)) == 0) {
+        tcb.context.uc_link = &scheduler;
+        tcb.context.uc_stack = default_stack;
+        makecontext(&(tcb.context), (void (*)(void)) start, 1, &arg);
         if (add_thread_to_ready_queue(tcb) == 0) {
             return tcb->tid;
         } else {
@@ -205,7 +205,7 @@ int cjoin(int tid) {
     if ((is_ready(tid) == 1) || (is_blocked(tid) == 1)) {
         TCB_t* running_thread = get_running_thread();
         join_list[tid] = running_thread;
-        add_thread_to_blocked_queue(running_thread);
+        add_thread_to_blocked_queue(*running_thread);
         
         return CJOIN_SUCCESS;
     }
@@ -226,5 +226,5 @@ int csignal (csem_t *sem) {
 }
 
 int cidentify (char *name, int size) {
-    printf("Henrique Valcanaia - 240501\nPietro Degrazia - 243666\n",);
+    printf("Henrique Valcanaia - 240501\nPietro Degrazia - 243666\n");
 }
