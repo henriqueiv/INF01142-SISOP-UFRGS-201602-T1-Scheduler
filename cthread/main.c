@@ -8,23 +8,11 @@
 //
 
 #include <stdio.h>
-//#include "scheduler.c"
 #include "include/cthread.h"
-//#define _XOPEN_SOURCE 600 // Resolve um problema do OS X com ucontext.h
-
+#define _XOPEN_SOURCE 600
 
 int main() {
-    // insert code here...
-    printf("Hello, World!\n");
+    printf("Hello, World, eu sou a main()!\n");
     
-
-    int argc = 12;
-    
-    int tid = ccreate(&func0, (void*) argc);
-    if (tid == ERROR) {
-        
-    } else {
-    
-    }
     return 0;
 }

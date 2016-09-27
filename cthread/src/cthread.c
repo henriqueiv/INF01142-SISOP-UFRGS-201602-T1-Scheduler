@@ -119,6 +119,28 @@ TCB_t* get_running_thread() {
 int first_run = 1;
 ucontext_t* main_context;
 
+void create_main_context() {
+    char function_stack[SIGSTKSZ];
+    main_context = (ucontext_t*) malloc(sizeof(ucontext_t));
+    getcontext(main_context);
+    main_context->uc_stack.ss_sp = function_stack;
+    main_context->uc_stack.ss_size = sizeof(function_stack);
+    main_context->uc_link = NULL;
+    makecontext(main_context, NULL, 0);
+    
+    TCB_t main;
+    main.tid = 0;
+    main.state = THREAD_STATE_READY;
+    main.ticket = generateTicket();
+    getcontext(&(main.context));
+    running_thread = &main;
+}
+
+void init_queues() {
+    CreateFila2(ready);
+    CreateFila2(exec);
+    CreateFila2(blocked);
+}
 int ccreate (void *(*start)(void *), void *arg) {
     if (first_run) {
         init_queues();
@@ -127,7 +149,7 @@ int ccreate (void *(*start)(void *), void *arg) {
     }
 
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
-    tcb->state = CREATION;
+    tcb->state = THREAD_STATE_CREATION;
     tcb->ticket = generateTicket();
     if (getcontext(&tcb->context) == 0) {
         if (add_thread_to_ready_queue(tcb) == 0) {
@@ -138,29 +160,6 @@ int ccreate (void *(*start)(void *), void *arg) {
     } else {
         return CCREATE_ERROR;
     }
-}
-
-void create_main_context() {
-    char function_stack[SIGSTKSZ];
-    main_context = (ucontext_t*) malloc(sizeof(ucontext_t));
-    getcontext(&main_context);
-    main_context->uc_stack.ss_sp = function_stack;
-    main_context->uc_stack.ss_size = sizeof(function_stack);
-    main_context->uc_link = NULL;
-    makecontext(main_context, NULL, 0);
-
-    TCB_t main;
-    main.tid = 0;
-    main.state = THREAD_STATE_READY;
-    main.ticket = generateTicket(); 
-    getcontext(&(main.context));
-    running_thread = &main;
-}
-
-void init_queues() {
-    CreateFila2(&ready);
-    CreateFila2(&exec);
-    CreateFila2(&blocked);
 }
 
 int cyield() {
