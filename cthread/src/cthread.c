@@ -162,14 +162,15 @@ int ccreate (void *(*start)(void *), void *arg) {
         create_main_context();
         intialized = 1;
     }
-
+    
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
     tcb->state = THREAD_STATE_CREATION;
     tcb->ticket = generate_ticket();
     tcb->tid = generate_thread_id();
-    tcb->context.uc_link = &scheduler;
-    
     if (getcontext(&tcb->context) == 0) {
+        tcb->context.uc_link = &scheduler;
+        tcb->context.uc_stack.ss_sp = malloc(SIGSTKSZ);
+        tcb->context.uc_stack.ss_size = SIGSTKSZ;
         makecontext(&(tcb->context), (void (*)(void)) start, 1, &arg);
         if (add_thread_to_ready_queue(tcb) == 0) {
             setcontext(&tcb->context);
