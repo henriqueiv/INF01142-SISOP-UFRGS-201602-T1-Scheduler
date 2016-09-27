@@ -118,7 +118,7 @@ int schedule() {
 
 // ---------- CTHREAD ----------
 
-int first_run = 1;
+bool intialized = false;
 ucontext_t* main_context;
 
 void create_main_context() {
@@ -144,10 +144,10 @@ void init_queues() {
     CreateFila2(&blocked);
 }
 int ccreate (void *(*start)(void *), void *arg) {
-    if (first_run) {
+    if (!intialized) {
         init_queues();
         create_main_context();
-        first_run = 0;
+        intialized = true;
     }
 
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));

@@ -20,8 +20,9 @@ int main(int argc, char *argv[]) {
     int tid = -1;
     int i = 1;
     for (i = 1; i < THREAD_COUNT; i++) {
-        printf("main(%d)", i);
         tid = ccreate(func0, (void*) i);
+        printf("main(%d) | tid(%d)", i, tid);
+        
         if (1 == 0) {
             cjoin(tid);
         }
