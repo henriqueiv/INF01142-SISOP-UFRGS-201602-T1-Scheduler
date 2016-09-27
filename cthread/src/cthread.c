@@ -151,10 +151,12 @@ void init_queues() {
     CreateFila2(&blocked);
 }
 
+char ss_sp_scheduler[SIGSTKSZ];
 void init_scheduler() {
     getcontext(&scheduler);
     scheduler.uc_link = &main_thread.context;
-    create_default_stack(&scheduler.uc_stack);
+    scheduler.uc_stack.ss_sp = ss_sp_scheduler;
+    scheduler.uc_stack.ss_size = SIGSTKSZ;
     makecontext(&scheduler, (void (*)(void))schedule, 0);
 }
 
