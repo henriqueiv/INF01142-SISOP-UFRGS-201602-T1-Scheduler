@@ -130,11 +130,10 @@ void schedule() {
 int intialized = 0;
 ucontext_t scheduler;
 TCB_t main_thread;
-stack_t default_stack;
 
-void create_default_stack() {
-    default_stack.ss_sp = malloc(SIGSTKSZ);
-    default_stack.ss_size = SIGSTKSZ;
+void create_default_stack(stack_t* stack) {
+    stack->ss_sp = malloc(SIGSTKSZ);
+    stack->ss_size = SIGSTKSZ;
 }
 
 void create_main_tcb() {
@@ -143,7 +142,7 @@ void create_main_tcb() {
     main_thread.ticket = generate_ticket();
     
     getcontext(&(main_thread.context));
-    main_thread.context.uc_stack = default_stack;
+    create_default_stack(&main_thread.context.uc_stack);
     main_thread.context.uc_link = NULL;
     makecontext(&main_thread.context, (void (*)(void))fimDaMain, 0);
     
@@ -158,14 +157,12 @@ void init_queues() {
 void init_scheduler() {
     getcontext(&scheduler);
     scheduler.uc_link = &main_thread.context;
-    scheduler.uc_stack.ss_sp = malloc(SIGSTKSZ);
-    scheduler.uc_stack.ss_size = SIGSTKSZ;
+    create_default_stack(&scheduler.uc_stack);
     makecontext(&scheduler, (void (*)(void))schedule, 0);
 }
 
 int ccreate (void *(*start)(void *), void *arg) {
     if (!intialized) {
-        create_default_stack();
         init_scheduler();
         create_main_tcb();
         init_queues();
@@ -178,7 +175,7 @@ int ccreate (void *(*start)(void *), void *arg) {
     tcb.tid = generate_thread_id();
     if (getcontext(&(tcb.context)) == 0) {
         tcb.context.uc_link = &scheduler;
-        tcb.context.uc_stack = default_stack;
+        create_default_stack(&tcb.context.uc_stack);
         makecontext(&(tcb.context), (void (*)(void)) start, 1, &arg);
         if (add_thread_to_ready_queue(tcb) == 0) {
             return tcb.tid;
@@ -204,7 +201,7 @@ int cjoin(int tid) {
     }
     
     if ((is_ready(tid) == 1) || (is_blocked(tid) == 1)) {
-        join_list[tid] = &running_thread;
+        // join_list[tid] = &running_thread;
         add_thread_to_blocked_queue(running_thread);
         
         return CJOIN_SUCCESS;
