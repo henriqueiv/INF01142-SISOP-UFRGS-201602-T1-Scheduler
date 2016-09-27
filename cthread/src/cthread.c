@@ -226,5 +226,5 @@ int csignal (csem_t *sem) {
 }
 
 int cidentify (char *name, int size) {
-    printf("Henrique Valcanaia - 240501\nPietro Degrazia - 243666\n",);
+    printf("Henrique Valcanaia - 240501\nPietro Degrazia - 243666\n");
 }
