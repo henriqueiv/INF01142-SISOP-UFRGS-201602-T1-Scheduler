@@ -111,13 +111,18 @@ int get_next_thread(TCB_t* next_thread) {
     }
 }
 
-int schedule() {
-    TCB_t next_thread;
-    if (get_next_thread(&next_thread) == 0) {
-        return 0;
-    } else {
-        return -1;
-    }
+void schedule() {
+    FirstFila2(&ready);
+    TCB_t* next_thread = GetAtIteratorFila2(&ready);
+    DeleteAtIteratorFila2(&ready);
+    setcontext(&(next_thread->context));
+    
+    //TCB_t next_thread;
+    //if (get_next_thread(&next_thread) == 0) {
+      //  return 0;
+    //} else {
+      //  return -1;
+    //}
 }
 
 // ---------- CTHREAD ----------
@@ -125,9 +130,10 @@ int schedule() {
 int intialized = 0;
 ucontext_t scheduler;
 TCB_t main_thread;
+
 void create_main_context() {
     main_thread.tid = 0;
-    main_thread.state = THREAD_STATE_READY;
+    main_thread.state = THREAD_STATE_EXECUTING;
     main_thread.ticket = generate_ticket();
     getcontext(&(main_thread.context));
 
