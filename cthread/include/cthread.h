@@ -9,11 +9,12 @@
 #ifndef cthread_h
 #define cthread_h
 
+#define _XOPEN_SOURCE 600
+
 #define CYIELD_SUCCESS 0
 #define CYIELD_ERROR -1
 
 #include "cdata.h"
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ucontext.h>

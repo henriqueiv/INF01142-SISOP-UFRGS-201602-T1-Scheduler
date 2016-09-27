@@ -11,7 +11,6 @@
 
 #include <stdio.h>
 #include "../include/cthread.h"
-#include "../include/scheduler.h"
 
 
 

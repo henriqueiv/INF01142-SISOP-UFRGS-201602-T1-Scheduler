@@ -19,10 +19,8 @@ void func1(void *arg) {
 void main() {
     int argc = 12;
     
-    enum CCREATE_STATUS tid = ccreate(&func0, (void*) argc);
-    if (tid == ERROR) {
-        
-    } else {
-    
-    }
+    // enum CCREATE_STATUS tid = ccreate(&func0, (void*) argc);
+    // if (tid == ERROR) {
+    //    } else {
+    // }
 }

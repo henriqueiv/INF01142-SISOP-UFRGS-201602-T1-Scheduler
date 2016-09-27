@@ -8,15 +8,17 @@
 
 #ifndef cdata_h
 #define cdata_h
-#include "support.h"
-#include <ucontext.h>
 
+#define _XOPEN_SOURCE 600
 
 #define THREAD_STATE_CREATION 0
 #define THREAD_STATE_READY 1
 #define THREAD_STATE_EXECUTING 2
 #define THREAD_STATE_BLOCKED 3
 #define THREAD_STATE_FINISH 4
+
+#include "support.h"
+#include <ucontext.h>
 
 /*!
  @struct s_TCB
