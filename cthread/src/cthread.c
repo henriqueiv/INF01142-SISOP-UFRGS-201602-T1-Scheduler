@@ -10,10 +10,14 @@
 
 #define CCREATE_ERROR -1
 
+int first_run = 1;
+ucontext_t* main_context;
+
 int ccreate (void *(*start)(void *), void *arg) {
     if (first_run) {
         init_queues();
         create_main_context();
+        first_run = 0;
     }
 
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
@@ -31,6 +35,14 @@ int ccreate (void *(*start)(void *), void *arg) {
 }
 
 void create_main_context() {
+    char function_stack = char[SIGSTKSZ];
+    main_context = (ucontext_t*) malloc(sizeof(context));
+    getcontext(&main_context);
+    main_context->uc_stack.ss_sp = function_stack;
+    main_context->uc_stack.ss_size = sizeof(function_stack);
+    main_context->uc_link = NULL;
+    makecontext(main_context, (void (*)(void))finish_thread, 0);
+
     TCB_t main = malloc(sizeof(TCB_t)); 
     main.tid = 0;
     main.state = THREAD_STATE.READY;
