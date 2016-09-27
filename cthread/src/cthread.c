@@ -156,7 +156,6 @@ int ccreate (void *(*start)(void *), void *arg) {
     if (!intialized) {
         init_scheduler();
         create_main_tcb();
-        
         init_queues();
         intialized = 1;
     }
@@ -169,13 +168,13 @@ int ccreate (void *(*start)(void *), void *arg) {
         context.uc_stack.ss_size = SIGSTKSZ;
         makecontext(&context, (void (*)(void)) start, 1, arg);
         
-        TCB_t tcb;
-        tcb.state = THREAD_STATE_CREATION;
-        tcb.ticket = generate_ticket();
-        tcb.tid = generate_thread_id();
-        tcb.context = context;
-        if (AppendFila2(&ready, (void*)&tcb) == 0) {
-            return tcb.tid;
+        TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
+        tcb->state = THREAD_STATE_CREATION;
+        tcb->ticket = generate_ticket();
+        tcb->tid = generate_thread_id();
+        tcb->context = context;
+        if (AppendFila2(&ready, (void*) tcb) == 0) {
+            return tcb->tid;
         } else {
             return CCREATE_ERROR;
         }
