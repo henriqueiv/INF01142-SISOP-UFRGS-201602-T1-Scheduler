@@ -13,10 +13,10 @@
 #define THREAD_COUNT 2
 
 void* func0(void* arg) {
-    printf("Eu sou outra thread imprimindo %d\n", *((int *)arg));
+    printf("Eu sou outra thread imprimindo %d\n", *((int*) arg));
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     int tid = -1;
     int i = 1;
     for (i = 1; i < THREAD_COUNT; i++) {
