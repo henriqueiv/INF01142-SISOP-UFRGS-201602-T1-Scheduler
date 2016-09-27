@@ -18,6 +18,10 @@ FILA2 blocked;
 
 // -------------- AUX FUNC -------------
 
+void* fimDaMain(void *arg) {
+    printf("Eu sou o fim da main \n");
+}
+
 /*!
  @brief Partiremos do 1 pois a 0 será a main
  */
@@ -119,24 +123,19 @@ int schedule() {
 // ---------- CTHREAD ----------
 
 int intialized = 0;
-ucontext_t* main_context;
 ucontext_t scheduler;
-
+TCB_t main_thread;
 void create_main_context() {
-    char function_stack[SIGSTKSZ];
-    main_context = (ucontext_t*) malloc(sizeof(ucontext_t));
-    getcontext(main_context);
-    main_context->uc_stack.ss_sp = function_stack;
-    main_context->uc_stack.ss_size = sizeof(function_stack);
-    main_context->uc_link = NULL;
-    makecontext(main_context, NULL, 0);
-    
-    TCB_t main;
-    main.tid = 0;
-    main.state = THREAD_STATE_READY;
-    main.ticket = generate_ticket();
-    getcontext(&(main.context));
-    running_thread = &main;
+    main_thread.tid = 0;
+    main_thread.state = THREAD_STATE_READY;
+    main_thread.ticket = generate_ticket();
+    getcontext(&(main_thread.context));
+
+    main_thread.context.uc_stack.ss_sp = malloc(SIGSTKSZ);
+    main_thread.context.uc_stack.ss_size = SIGSTKSZ;
+    main_thread.context.uc_link = NULL;
+    makecontext(&main_thread.context, (void (*)(void))fimDaMain, 0);
+    running_thread = &main_thread;
 }
 
 void init_queues() {
@@ -149,7 +148,7 @@ char ss_sp_scheduler[SIGSTKSZ];
 
 void init_scheduler() {
     getcontext(&scheduler);
-    scheduler.uc_link = main_context;
+    scheduler.uc_link = &main_thread.context;
     scheduler.uc_stack.ss_sp = ss_sp_scheduler;
     scheduler.uc_stack.ss_size = SIGSTKSZ;
     makecontext(&scheduler, (void (*)(void))schedule, 0);
@@ -157,9 +156,9 @@ void init_scheduler() {
 
 int ccreate (void *(*start)(void *), void *arg) {
     if (!intialized) {
+        create_main_context();
         init_scheduler();
         init_queues();
-        create_main_context();
         intialized = 1;
     }
     
