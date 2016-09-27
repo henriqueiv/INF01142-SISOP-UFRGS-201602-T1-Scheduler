@@ -21,7 +21,7 @@ PFILA2 blocked;
 /*!
  @brief Partiremos do 1 pois a 0 será a main
  */
-int threadId = 1;
+int thread_id = 1;
 
 int schedule() {
     TCB_t next_thread;
@@ -60,8 +60,8 @@ int generate_ticket() {
  @discussion Este identificador é sequencial e não é reutilizado. Use com sabedoria.
  */
 int generate_thread_id() {
-    threadId++;
-    return threadId;
+    thread_id++;
+    return thread_id;
 }
 
 /*!
