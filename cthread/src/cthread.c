@@ -11,7 +11,7 @@
 #define CCREATE_ERROR -1
 #define MAIN_THREAD_ID 0
 
-TCB_t* running_thread;
+TCB_t running_thread;
 
 FILA2 ready;
 FILA2 blocked;
@@ -97,10 +97,6 @@ int is_blocked(int tid) {
     return find_thread_with_id(tid, blocked);
 }
 
-TCB_t* get_running_thread() {
-    return running_thread;
-}
-
 int get_next_thread(TCB_t* next_thread) {
     int randomTicket = generate_ticket();
     if (get_thread_closest_to_ticket(randomTicket, next_thread) == 0) {
@@ -111,8 +107,13 @@ int get_next_thread(TCB_t* next_thread) {
 }
 
 void schedule() {
+    printf("SCHEDULE\n");
     FirstFila2(&ready);
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
+    printf("next_thread: tid(%d)\n",next_thread->tid);
+    
+    running_thread = *next_thread;
+
     DeleteAtIteratorFila2(&ready);
     setcontext(&(next_thread->context));
     
@@ -146,7 +147,7 @@ void create_main_tcb() {
     main_thread.context.uc_link = NULL;
     makecontext(&main_thread.context, (void (*)(void))fimDaMain, 0);
     
-    running_thread = &main_thread;
+    running_thread = main_thread;
 }
 
 void init_queues() {
@@ -203,9 +204,8 @@ int cjoin(int tid) {
     }
     
     if ((is_ready(tid) == 1) || (is_blocked(tid) == 1)) {
-        TCB_t* running_thread = get_running_thread();
-        join_list[tid] = running_thread;
-        add_thread_to_blocked_queue(*running_thread);
+        join_list[tid] = &running_thread;
+        add_thread_to_blocked_queue(running_thread);
         
         return CJOIN_SUCCESS;
     }
