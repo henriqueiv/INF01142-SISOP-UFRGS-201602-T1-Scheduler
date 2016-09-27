@@ -17,7 +17,6 @@
 #define THREAD_STATE_BLOCKED 3
 #define THREAD_STATE_FINISH 4
 
-
 #include "support.h"
 #include <ucontext.h>
 
