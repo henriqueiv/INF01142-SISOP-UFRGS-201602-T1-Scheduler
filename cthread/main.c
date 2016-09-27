@@ -12,14 +12,15 @@
 #define _XOPEN_SOURCE 600
 #define THREAD_COUNT 100
 
-void func0(void *arg) {
+void* func0(void *arg) {
     printf("Eu sou outra thread imprimindo %d\n", *((int *)arg));
 }
 
 int main(int argc, char *argv[]) {
     int tid = -1;
-    for (int i = 1; i < THREAD_COUNT; i++) {
-        tid = ccreate(&func0, (void*) i);
+    int i = 1;
+    for (i = 1; i < THREAD_COUNT; i++) {
+        tid = ccreate(func0, (void*) i);
         if (1 == 0) {
             cjoin(tid);
         }
