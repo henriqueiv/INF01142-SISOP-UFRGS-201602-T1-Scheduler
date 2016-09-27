@@ -124,21 +124,6 @@ int intialized = 0;
 ucontext_t scheduler;
 TCB_t main_thread;
 
-char main_stack[SIGSTKSZ];
-void create_main_tcb() {
-    main_thread.tid = MAIN_THREAD_ID;
-    main_thread.state = THREAD_STATE_EXECUTING;
-    main_thread.ticket = generate_ticket();
-    getcontext(&(main_thread.context));
-    
-    running_thread = main_thread;
-}
-
-void init_queues() {
-    CreateFila2(&ready);
-    CreateFila2(&blocked);
-}
-
 char ss_sp_scheduler[SIGSTKSZ];
 void init_scheduler() {
     getcontext(&scheduler);
@@ -148,10 +133,24 @@ void init_scheduler() {
     makecontext(&scheduler, (void (*)(void))schedule, 0);
 }
 
+void create_main_tcb() {
+    main_thread.tid = MAIN_THREAD_ID;
+    main_thread.state = THREAD_STATE_RUNNING;
+    main_thread.ticket = generate_ticket();
+    getcontext(&main_thread.context);
+    
+    running_thread = main_thread;
+}
+
+void init_queues() {
+    CreateFila2(&ready);
+    CreateFila2(&blocked);
+}
+
 int ccreate (void *(*start)(void *), void *arg) {
     if (!intialized) {
-        init_scheduler();
         create_main_tcb();
+        init_scheduler();
         init_queues();
         intialized = 1;
     }
