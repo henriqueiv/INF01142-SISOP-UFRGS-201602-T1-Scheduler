@@ -21,9 +21,9 @@
 
 //typedef int CCREATE_STATUS;
 
-enum CCREATE_STATUS {
-    ERROR = -1
-};
+//enum CCREATE_STATUS {
+  //  ERROR = -1
+//};
 
 
 /*!
@@ -32,7 +32,7 @@ enum CCREATE_STATUS {
  @param arg um parâmetro que pode ser passado para a thread na sua criação. (Obs.: é um único parâmetro. Se for necessário passar mais de um valor deve-se empregar um ponteiro para uma struct)
  @return Quando executada corretamente retorna um valor positivo, que representa o identificador da thread criada, caso contrário, retorna CCREATE_ERROR (valor negativo)
  */
-enum CCREATE_STATUS ccreate (void *(*start)(void *), void *arg);
+int ccreate (void *(*start)(void *), void *arg);
 
 
 /*!

@@ -7,7 +7,6 @@
 //
 
 #include "test_ccreate.h"
-#include "cthread.h"
 
 void func0(void *arg) {
     printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
@@ -17,7 +16,7 @@ void func1(void *arg) {
     printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
 }
 
-void test0() {
+void main() {
     int argc = 12;
     
     enum CCREATE_STATUS tid = ccreate(&func0, (void*) argc);

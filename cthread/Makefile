@@ -15,8 +15,9 @@ LIB_DIR=./lib
 INC_DIR=./include
 BIN_DIR=./bin
 SRC_DIR=./src
+TST_DIR=./teste
 
-all: objetos mvObj libcthread.a mvLib main
+all: objetos mvObj libcthread.a mvLib main 
 
 objetos: $(SRC_DIR)/cthread.c $(INC_DIR)/cdata.h $(INC_DIR)/cthread.h $(INC_DIR)/support.h
 	$(CC) -c $(SRC_DIR)/cthread.c -Wall
@@ -30,10 +31,11 @@ libcthread.a: $(BIN_DIR)/cthread.o
 mvLib:
 	mv *.a $(LIB_DIR)
 
-main: $(INC_DIR)/cthread.h
+main:
 	$(CC) -o myprog main.c -L$(LIB_DIR) -lcthread -Wall
 
+testeCreate:
+	$(CC) -o $(TST_DIR)/testeCreate $(TST_DIR)/test_ccreate.c -L$(LIB_DIR) -lcthread -Wall
+
 clean:
-	rm -rf $(LIB_DIR)/*.a $(BIN_DIR)/cthread.o $(SRC_DIR)/*~ $(INC_DIR)/*~ *~
-
-
+	rm -rf myprog $(LIB_DIR)/*.a $(BIN_DIR)/cthread.o $(TST_DIR)/*.o $(TST_DIR)/testeCreate $(SRC_DIR)/*~ $(INC_DIR)/*~ *~

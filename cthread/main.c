@@ -1,3 +1,4 @@
+
 //
 //  main.c
 //  cthread
@@ -7,13 +8,23 @@
 //
 
 #include <stdio.h>
-//#include "../include/cthread.h"
+//#include "scheduler.c"
+#include "include/cthread.h"
 //#define _XOPEN_SOURCE 600 // Resolve um problema do OS X com ucontext.h
 
 
-int main(int argc, const char * argv[]) {
+int main() {
     // insert code here...
     printf("Hello, World!\n");
     
+
+    int argc = 12;
+    
+    int tid = ccreate(&func0, (void*) argc);
+    if (tid == ERROR) {
+        
+    } else {
+    
+    }
     return 0;
 }
