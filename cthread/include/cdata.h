@@ -9,6 +9,7 @@
 #ifndef cdata_h
 #define cdata_h
 #include "support.h"
+#include <ucontext.h>
 
 enum THREAD_STATE {
     CREATION = 0,

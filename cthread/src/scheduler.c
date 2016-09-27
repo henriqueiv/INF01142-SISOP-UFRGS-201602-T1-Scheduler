@@ -6,7 +6,7 @@
 //  Copyright © 2016 Henrique Valcanaia. All rights reserved.
 //
 
-#include "scheduler.h"
+#include "../include/scheduler.h"
 
 TCB_t* running_thread;
 

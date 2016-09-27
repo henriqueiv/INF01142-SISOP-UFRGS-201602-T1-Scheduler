@@ -6,7 +6,7 @@
 //  Copyright © 2016 Henrique Valcanaia. All rights reserved.
 //
 
-#include "cthread.h"
+#include "../include/cthread.h"
 
 #define CCREATE_ERROR -1
 
