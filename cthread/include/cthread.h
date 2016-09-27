@@ -13,7 +13,6 @@
 #define CYIELD_ERROR -1
 
 #include "cdata.h"
-#include "scheduler.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>

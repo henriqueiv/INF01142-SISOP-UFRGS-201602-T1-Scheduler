@@ -127,7 +127,7 @@ int ccreate (void *(*start)(void *), void *arg) {
     }
 
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
-    tcb->state = CREATION;
+    tcb->state = THREAD_STATE_CREATION;
     tcb->ticket = generateTicket();
     if (getcontext(&tcb->context) == 0) {
         if (add_thread_to_ready_queue(tcb) == 0) {

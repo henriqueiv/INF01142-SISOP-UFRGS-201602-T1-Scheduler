@@ -11,13 +11,12 @@
 #include "support.h"
 #include <ucontext.h>
 
-enum THREAD_STATE {
-    CREATION = 0,
-    READY = 1,
-    EXEC = 2,
-    BLOCKED = 3,
-    FINISH = 4
-};
+
+#define THREAD_STATE_CREATION 0
+#define THREAD_STATE_READY 1
+#define THREAD_STATE_EXECUTING 2
+#define THREAD_STATE_BLOCKED 3
+#define THREAD_STATE_FINISH 4
 
 /*!
  @struct s_TCB
