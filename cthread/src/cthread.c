@@ -131,18 +131,15 @@ int intialized = 0;
 ucontext_t scheduler;
 TCB_t main_thread;
 
-void create_default_stack(stack_t* stack) {
-    stack->ss_sp = malloc(SIGSTKSZ);
-    stack->ss_size = SIGSTKSZ;
-}
-
+char main_stack[SIGSTKSZ];
 void create_main_tcb() {
     main_thread.tid = MAIN_THREAD_ID;
     main_thread.state = THREAD_STATE_EXECUTING;
     main_thread.ticket = generate_ticket();
     
     getcontext(&(main_thread.context));
-    create_default_stack(&main_thread.context.uc_stack);
+    main_thread.context.uc_stack.ss_sp = main_stack;
+    main_thread.context.uc_stack.ss_size = SIGSTKSZ;
     main_thread.context.uc_link = NULL;
     makecontext(&main_thread.context, (void (*)(void))fimDaMain, 0);
     
@@ -175,7 +172,9 @@ int ccreate (void *(*start)(void *), void *arg) {
     tcb.tid = generate_thread_id();
     if (getcontext(&(tcb.context)) == 0) {
         tcb.context.uc_link = &scheduler;
-        create_default_stack(&tcb.context.uc_stack);
+        char tcb_stack[SIGSTKSZ];
+        tcb.context.uc_stack.ss_sp = tcb_stack;
+        tcb.context.uc_stack.ss_size = SIGSTKSZ;
         makecontext(&(tcb.context), (void (*)(void)) start, 1, &arg);
         if (add_thread_to_ready_queue(tcb) == 0) {
             return tcb.tid;
