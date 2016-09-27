@@ -180,7 +180,7 @@ int ccreate (void *(*start)(void *), void *arg) {
         tcb.context.uc_stack = default_stack;
         makecontext(&(tcb.context), (void (*)(void)) start, 1, &arg);
         if (add_thread_to_ready_queue(tcb) == 0) {
-            return tcb->tid;
+            return tcb.tid;
         } else {
             return CCREATE_ERROR;
         }
