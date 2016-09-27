@@ -13,8 +13,6 @@
 		62EEAB291D8B087F00E16610 /* cthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB281D8B087F00E16610 /* cthread.c */; };
 		62EEAB2C1D8B0F0300E16610 /* test_ccreate.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB2A1D8B0F0300E16610 /* test_ccreate.c */; };
 		62EEAB2E1D8B0FFA00E16610 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB2D1D8B0FFA00E16610 /* README.md */; };
-		62EEAB4F1D8B17AB00E16610 /* scheduler.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB4E1D8B17AB00E16610 /* scheduler.c */; };
-		62EEAB521D8B1CDF00E16610 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB511D8B1CDF00E16610 /* utils.c */; };
 		62EEAB551D8B289900E16610 /* test_cidentify.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB531D8B289900E16610 /* test_cidentify.c */; };
 /* End PBXBuildFile section */
 
@@ -42,10 +40,6 @@
 		62EEAB2A1D8B0F0300E16610 /* test_ccreate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_ccreate.c; sourceTree = "<group>"; };
 		62EEAB2B1D8B0F0300E16610 /* test_ccreate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_ccreate.h; sourceTree = "<group>"; };
 		62EEAB2D1D8B0FFA00E16610 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		62EEAB4D1D8B179800E16610 /* scheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scheduler.h; sourceTree = "<group>"; };
-		62EEAB4E1D8B17AB00E16610 /* scheduler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scheduler.c; sourceTree = "<group>"; };
-		62EEAB501D8B1C5000E16610 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = utils.h; path = cthread/include/utils.h; sourceTree = SOURCE_ROOT; };
-		62EEAB511D8B1CDF00E16610 /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		62EEAB531D8B289900E16610 /* test_cidentify.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_cidentify.c; sourceTree = "<group>"; };
 		62EEAB541D8B289900E16610 /* test_cidentify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_cidentify.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -99,9 +93,7 @@
 			children = (
 				62EEAB271D8B001100E16610 /* cdata.h */,
 				62EEAB1D1D8AFD4C00E16610 /* cthread.h */,
-				62EEAB4D1D8B179800E16610 /* scheduler.h */,
 				52954FA01D8B14CF00F7E664 /* support.h */,
-				62EEAB501D8B1C5000E16610 /* utils.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -125,8 +117,6 @@
 			isa = PBXGroup;
 			children = (
 				62EEAB281D8B087F00E16610 /* cthread.c */,
-				62EEAB4E1D8B17AB00E16610 /* scheduler.c */,
-				62EEAB511D8B1CDF00E16610 /* utils.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -208,8 +198,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				62EEAB291D8B087F00E16610 /* cthread.c in Sources */,
-				62EEAB521D8B1CDF00E16610 /* utils.c in Sources */,
-				62EEAB4F1D8B17AB00E16610 /* scheduler.c in Sources */,
 				62EEAB2C1D8B0F0300E16610 /* test_ccreate.c in Sources */,
 				62EEAB2E1D8B0FFA00E16610 /* README.md in Sources */,
 				62EEAB261D8AFF6600E16610 /* makefile in Sources */,
