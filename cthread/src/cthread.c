@@ -118,9 +118,10 @@ void schedule() {
     printf("next_thread: tid(%d)\n",next_thread->tid);
     
     running_thread = next_thread;
-
     DeleteAtIteratorFila2(&ready);
-    setcontext(&(running_thread->context));
+    running_thread->state = THREAD_STATE_RUNNING;
+
+    setcontext(&running_thread->context);
 }
 
 // ---------- CTHREAD ----------
