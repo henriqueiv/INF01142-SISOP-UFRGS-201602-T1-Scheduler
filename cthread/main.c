@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     int i = 1;
     for (i = 1; i < THREAD_COUNT; i++) {
         tid = ccreate(func0, (void*) i);
-        printf("main(%d) | tid(%d)", i, tid);
+        printf("main(%d) | tid(%d)\n", i, tid);
         
         if (1 == 0) {
             cjoin(tid);
