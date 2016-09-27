@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "include/cthread.h"
 #define _XOPEN_SOURCE 600
-#define THREAD_COUNT 100
+#define THREAD_COUNT 10
 
 void* func0(void *arg) {
     printf("Eu sou outra thread imprimindo %d\n", *((int *)arg));

@@ -116,13 +116,6 @@ void schedule() {
 
     DeleteAtIteratorFila2(&ready);
     setcontext(&(next_thread->context));
-    
-    //TCB_t next_thread;
-    //if (get_next_thread(&next_thread) == 0) {
-      //  return 0;
-    //} else {
-      //  return -1;
-    //}
 }
 
 // ---------- CTHREAD ----------
@@ -136,12 +129,7 @@ void create_main_tcb() {
     main_thread.tid = MAIN_THREAD_ID;
     main_thread.state = THREAD_STATE_EXECUTING;
     main_thread.ticket = generate_ticket();
-    
     getcontext(&(main_thread.context));
-    main_thread.context.uc_stack.ss_sp = main_stack;
-    main_thread.context.uc_stack.ss_size = SIGSTKSZ;
-    main_thread.context.uc_link = NULL;
-    makecontext(&main_thread.context, (void (*)(void))fimDaMain, 0);
     
     running_thread = main_thread;
 }
@@ -168,16 +156,19 @@ int ccreate (void *(*start)(void *), void *arg) {
         intialized = 1;
     }
     
-    TCB_t tcb;
-    tcb.state = THREAD_STATE_CREATION;
-    tcb.ticket = generate_ticket();
-    tcb.tid = generate_thread_id();
-    if (getcontext(&(tcb.context)) == 0) {
-        tcb.context.uc_link = &scheduler;
+    ucontext_t context;
+    if (getcontext(&context) == 0) {
         char tcb_stack[SIGSTKSZ];
-        tcb.context.uc_stack.ss_sp = tcb_stack;
-        tcb.context.uc_stack.ss_size = SIGSTKSZ;
-        makecontext(&(tcb.context), (void (*)(void)) start, 1, &arg);
+        context.uc_link = &scheduler;
+        context.uc_stack.ss_sp = tcb_stack;
+        context.uc_stack.ss_size = SIGSTKSZ;
+        makecontext(&context, (void (*)(void)) start, 1, arg);
+        
+        TCB_t tcb;
+        tcb.state = THREAD_STATE_CREATION;
+        tcb.ticket = generate_ticket();
+        tcb.tid = generate_thread_id();
+        tcb.context = context;
         if (add_thread_to_ready_queue(tcb) == 0) {
             return tcb.tid;
         } else {
