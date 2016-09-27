@@ -11,6 +11,11 @@
 #define CCREATE_ERROR -1
 
 int ccreate (void *(*start)(void *), void *arg) {
+    if (first_run) {
+        init_queues();
+        create_main_context();
+    }
+
     TCB_t* tcb = (TCB_t*) malloc(sizeof(TCB_t));
     tcb->state = CREATION;
     tcb->ticket = generateTicket();
@@ -23,6 +28,21 @@ int ccreate (void *(*start)(void *), void *arg) {
     } else {
         return CCREATE_ERROR;
     }
+}
+
+void create_main_context() {
+    TCB_t main = malloc(sizeof(TCB_t)); 
+    main.tid = 0;
+    main.state = THREAD_STATE.READY;
+    main.ticket = generateTicket(); 
+    getcontext(&main->context);
+    running_thread = &main;
+}
+
+void init_queues() {
+    CreateFila2(&ready);
+    CreateFila2(&exec);
+    CreateFila2(&blocked);
 }
 
 int cyield() {
