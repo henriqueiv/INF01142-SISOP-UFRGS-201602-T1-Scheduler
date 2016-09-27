@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "include/cthread.h"
 #define _XOPEN_SOURCE 600
-#define THREAD_COUNT 10
+#define THREAD_COUNT 2
 
 void* func0(void *arg) {
     printf("Eu sou outra thread imprimindo %d\n", *((int *)arg));
@@ -22,10 +22,8 @@ int main(int argc, char *argv[]) {
     for (i = 1; i < THREAD_COUNT; i++) {
         tid = ccreate(func0, (void*) i);
         printf("main(%d) | tid(%d)\n", i, tid);
-        
-        if (1 == 0) {
-            cjoin(tid);
-        }
+        cyield();
+        printf("pos Yield\n");
     }
     
     printf("fim da main\n");

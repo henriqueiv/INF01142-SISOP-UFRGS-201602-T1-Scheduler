@@ -10,6 +10,7 @@
 
 #define CCREATE_ERROR -1
 #define MAIN_THREAD_ID 0
+#define CYIELD_ERROR -1
 
 TCB_t running_thread;
 
@@ -108,7 +109,11 @@ int get_next_thread(TCB_t* next_thread) {
 
 void schedule() {
     printf("SCHEDULE\n");
-    FirstFila2(&ready);
+    if (FirstFila2(&ready) != 0) {
+        printf("ERRO OU FILA VAZIA\n");
+        return;
+    }
+
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
     printf("next_thread: tid(%d)\n",next_thread->tid);
     
@@ -127,7 +132,7 @@ TCB_t main_thread;
 char ss_sp_scheduler[SIGSTKSZ];
 void init_scheduler() {
     getcontext(&scheduler);
-    scheduler.uc_link = &main_thread.context;
+    scheduler.uc_link = &(main_thread.context);
     scheduler.uc_stack.ss_sp = ss_sp_scheduler;
     scheduler.uc_stack.ss_size = SIGSTKSZ;
     makecontext(&scheduler, (void (*)(void))schedule, 0);
@@ -149,8 +154,9 @@ void init_queues() {
 
 int ccreate (void *(*start)(void *), void *arg) {
     if (!intialized) {
-        create_main_tcb();
         init_scheduler();
+        create_main_tcb();
+        
         init_queues();
         intialized = 1;
     }
@@ -168,7 +174,7 @@ int ccreate (void *(*start)(void *), void *arg) {
         tcb.ticket = generate_ticket();
         tcb.tid = generate_thread_id();
         tcb.context = context;
-        if (add_thread_to_ready_queue(tcb) == 0) {
+        if (AppendFila2(&ready, (void*)&tcb) == 0) {
             return tcb.tid;
         } else {
             return CCREATE_ERROR;
@@ -179,6 +185,17 @@ int ccreate (void *(*start)(void *), void *arg) {
 }
 
 int cyield() {
+    printf("YIELD\n");
+    printf("Running: %d\n", running_thread.tid);
+
+    // if (FirstFila2(&ready) != 0) {
+    //     printf("ERRO OU FILA READY VAZIA\n");
+    //     return CYIELD_ERROR;
+    // }
+
+    swapcontext(&(running_thread.context), &scheduler);
+
+
     return CYIELD_SUCCESS;
 }
 
