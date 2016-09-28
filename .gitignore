@@ -1,3 +1,6 @@
+cthread/bin/
+cthread/lib/
+cthread/myprog
 
 # Created by https://www.gitignore.io/api/xc,xcode,c,linux
 
