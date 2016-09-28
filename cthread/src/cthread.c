@@ -29,22 +29,22 @@ int thread_id = 1;
 
 void print_queue(FILA2 queue) {
     if (FirstFila2(&queue) != 0) {
-        printf("ERRO ou FILA VAZIA\n");
+        DEBUG_PRINT("ERRO ou FILA VAZIA\n");
         return;
     }
     
     TCB_t* currentTCB = (TCB_t*) malloc(sizeof(TCB_t));
     int i = 0;
     do {  
-        printf("%d\n", i);
+        DEBUG_PRINT("%d\n", i);
         currentTCB = GetAtIteratorFila2(&queue);
         if (currentTCB == NULL)
             break;
             
-        printf("pos(%d) tid(%d)\n", i, currentTCB->tid);
+        DEBUG_PRINT("pos(%d) tid(%d)\n", i, currentTCB->tid);
         i++;
     } while (NextFila2(&queue) == 0);
-    printf("fim\n");
+    DEBUG_PRINT("fim\n");
 }
 
 
@@ -133,14 +133,14 @@ int is_blocked(int tid) {
 // ================ SCHEDULE ================
 
 void schedule() {
-    printf("SCHEDULE\n");
+    DEBUG_PRINT("SCHEDULE\n");
     if (FirstFila2(&ready) != 0) {
-        printf("ERRO OU FILA VAZIA\n");
+        DEBUG_PRINT("ERRO OU FILA VAZIA\n");
         return;
     }
     
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
-    printf("next_thread: tid(%d)\n", next_thread->tid);
+    DEBUG_PRINT("next_thread: tid(%d)\n", next_thread->tid);
     
     running_thread = next_thread;
     DeleteAtIteratorFila2(&ready);
@@ -210,7 +210,7 @@ int ccreate (void *(*start)(void *), void *arg) {
 }
 
 int cyield() {
-    printf("Running: %d\n", running_thread->tid);
+    DEBUG_PRINT("Running: %d\n", running_thread->tid);
     
     TCB_t* thread;
     thread = running_thread;
