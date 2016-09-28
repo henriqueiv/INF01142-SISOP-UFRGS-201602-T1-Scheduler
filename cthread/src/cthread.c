@@ -163,9 +163,9 @@ int ccreate (void *(*start)(void *), void *arg) {
     
     ucontext_t context;
     if (getcontext(&context) == 0) {
-        // char tcb_stack[SIGSTKSZ];
+        char tcb_stack[SIGSTKSZ];
         context.uc_link = &scheduler;
-        context.uc_stack.ss_sp = malloc(SIGSTKSZ);
+        context.uc_stack.ss_sp = tcb_stack;
         context.uc_stack.ss_size = SIGSTKSZ;
         makecontext(&context, (void (*)(void)) start, 1, arg);
         
