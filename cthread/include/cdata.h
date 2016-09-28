@@ -36,6 +36,11 @@ typedef struct s_TCB {
     ucontext_t context;
 } TCB_t;
 
+typedef struct s_join {
+    TCB_t* blocked_thread;
+    TCB_t* target_thread;
+} join_t;
+
 typedef struct s_sem {
     int count; // indica se recurso está ocupado ou não (livre > 0, ocupado ≤ 0)
     PFILA2 fila; // ponteiro para uma fila de threads bloqueadas no semáforo

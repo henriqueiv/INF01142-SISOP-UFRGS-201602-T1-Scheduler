@@ -18,7 +18,7 @@ TCB_t* running_thread;
 
 FILA2 ready;
 FILA2 blocked;
-
+FILA2 joins;
 /*!
  @brief Partiremos do 1 pois a 0 será a main
  */
@@ -176,6 +176,7 @@ void create_main_tcb() {
 void init_queues() {
     CreateFila2(&ready);
     CreateFila2(&blocked);
+    CreateFila2(&joins);
 }
 
 int ccreate (void *(*start)(void *), void *arg) {
@@ -216,6 +217,15 @@ int cyield() {
     thread = running_thread;
     thread->state = THREAD_STATE_READY;
     
+    if(FirstFila2(&ready) != 0) {
+        printf("Fila de Aptos Vazia, cyield negado!\n");
+        return CYIELD_ERROR;
+    }
+    if (AppendFila2(&ready, (void*)thread) != 0) {
+        printf("Erro adicionando thread a fila de aptos. cyield negado.\n");
+        return CYIELD_ERROR;
+    }
+    
     running_thread = NULL;
     
     swapcontext(&thread->context, &scheduler);
@@ -228,6 +238,9 @@ int cyield() {
 #define CJOIN_THREAD_ALREADY_JOINED -2
 
 int cjoin(int tid) {
+    //checar se já está bloqueada?
+    //checar se thread alvo já tem alguem no aguardo
+    
     if (join_list[tid] != NULL) {
         return CJOIN_THREAD_ALREADY_JOINED;
     }
