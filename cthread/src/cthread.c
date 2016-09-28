@@ -12,21 +12,29 @@
 #define CYIELD_ERROR -1
 #define MAIN_THREAD_ID 0
 
+#define DEBUG 3
+
+#if defined(DEBUG) && DEBUG > 0
+#define DEBUG_PRINT(fmt, args...) fprintf(stderr, "DEBUG: %s:%d:%s(): " fmt, \
+__FILE__, __LINE__, __func__, ##args)
+#else
+#define DEBUG_PRINT(fmt, args...) /* Don't do anything in release builds */
+#endif
+
+// ================ LOCAL VARS ================
+
 TCB_t* running_thread;
 
 FILA2 ready;
 FILA2 blocked;
 
-// -------------- AUX FUNC -------------
-
-void* fimDaMain(void *arg) {
-    printf("Eu sou o fim da main \n");
-}
-
 /*!
  @brief Partiremos do 1 pois a 0 será a main
  */
 int thread_id = 1;
+
+
+// ================ AUXILIAR FUNCTIONS ================
 
 /*!
  @brief Partiremos do 1 pois a 0 será a main
@@ -43,6 +51,15 @@ int get_thread_closest_to_ticket(int ticket, TCB_t *next_thread) {
 int generate_ticket() {
     int ticket = Random2() % 255;
     return ticket;
+}
+
+int get_next_thread(TCB_t* next_thread) {
+    int random_ticket = generate_ticket();
+    if (get_thread_closest_to_ticket(random_ticket, next_thread) == 0) {
+        return  0;
+    } else {
+        return -1;
+    }
 }
 
 /*!
@@ -77,6 +94,9 @@ int add_thread_to_blocked_queue(TCB_t thread) {
     return result;
 }
 
+/*!
+ @brief Procura um TCB na fila "queue" com o thread id "tid"
+ */
 int find_thread_with_id(int tid, FILA2 queue) {
     struct sFilaNode2 *node = (struct sFilaNode2*) malloc(sizeof(struct sFilaNode2));
     node = queue.first;
@@ -98,33 +118,26 @@ int is_blocked(int tid) {
     return find_thread_with_id(tid, blocked);
 }
 
-int get_next_thread(TCB_t* next_thread) {
-    int randomTicket = generate_ticket();
-    if (get_thread_closest_to_ticket(randomTicket, next_thread) == 0) {
-        return  0;
-    } else {
-        return -1;
-    }
-}
+// ================ SCHEDULE ================
 
 void schedule() {
-    printf("SCHEDULE\n");
+    DEBUG_PRINT("SCHEDULE\n");
     if (FirstFila2(&ready) != 0) {
-        printf("ERRO OU FILA VAZIA\n");
+        DEBUG_PRINT("ERRO OU FILA VAZIA\n");
         return;
     }
-
+    
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
-    printf("next_thread: tid(%d)\n",next_thread->tid);
+    DEBUG_PRINT("next_thread: tid(%d)\n", next_thread->tid);
     
     running_thread = next_thread;
     DeleteAtIteratorFila2(&ready);
     running_thread->state = THREAD_STATE_RUNNING;
-
+    
     setcontext(&running_thread->context);
 }
 
-// ---------- CTHREAD ----------
+// ================ CTHREAD ================
 
 int initialized = 0;
 ucontext_t scheduler;
@@ -163,9 +176,14 @@ int ccreate (void *(*start)(void *), void *arg) {
     
     ucontext_t context;
     if (getcontext(&context) == 0) {
-        char tcb_stack[SIGSTKSZ];
+        char* stack = (char*) malloc(SIGSTKSZ);
+        if (stack == NULL) {
+            DEBUG_PRINT("Recursos insuficientes para criar nova thread!");
+            return CCREATE_ERROR;
+        }
+        
         context.uc_link = &scheduler;
-        context.uc_stack.ss_sp = tcb_stack;
+        context.uc_stack.ss_sp = stack;
         context.uc_stack.ss_size = SIGSTKSZ;
         makecontext(&context, (void (*)(void)) start, 1, arg);
         
@@ -185,8 +203,7 @@ int ccreate (void *(*start)(void *), void *arg) {
 }
 
 int cyield() {
-    printf("YIELD\n");
-    printf("Running: %d\n", running_thread->tid);
+    DEBUG_PRINT("Running: %d\n", running_thread->tid);
     
     TCB_t* thread;
     thread = running_thread;
