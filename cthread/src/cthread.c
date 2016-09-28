@@ -45,11 +45,11 @@ int get_thread_closest_to_ticket(int ticket, TCB_t *next_thread) {
 
 /*!
  @brief Gera um numero aleatorio inteiro de 1 byte
- @discussion Utiliza a funcao Random2() da biblioteca support.o disponibilizada pelo professor
+ @discussion Utiliza a funcao Random2() da biblioteca support.o disponibilizada pelo professor. O
  @return Inteiro aleatorio de 1 byte
  */
 int generate_ticket() {
-    int ticket = Random2() % 255;
+    int ticket = Random2() % 256;
     return ticket;
 }
 
