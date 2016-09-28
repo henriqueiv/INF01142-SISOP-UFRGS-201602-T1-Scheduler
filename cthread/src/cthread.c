@@ -215,9 +215,7 @@ int cyield() {
     TCB_t* thread;
     thread = running_thread;
     thread->state = THREAD_STATE_READY;
-    
-    running_thread = NULL;
-    
+        
     swapcontext(&thread->context, &scheduler);
     
     return CYIELD_SUCCESS;
