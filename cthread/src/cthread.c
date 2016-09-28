@@ -36,6 +36,27 @@ int thread_id = 1;
 
 // ================ AUXILIAR FUNCTIONS ================
 
+
+void print_queue(FILA2 queue) {
+    if (FirstFila2(&queue) != 0) {
+        printf("ERRO ou FILA VAZIA\n");
+        return;
+    }
+    TCB_t* currentTCB = (TCB_t*) malloc(sizeof(TCB_t));
+    int i = 0;
+    do {  
+        printf("%d\n", i);
+        currentTCB = GetAtIteratorFila2(&queue);
+        if (currentTCB == NULL)
+            break;
+            
+        printf("pos(%d) tid(%d)\n", i, currentTCB->tid);
+        i++;
+    } while (NextFila2(&queue) == 0);
+    printf("fim\n");
+}
+
+
 /*!
  @brief Partiremos do 1 pois a 0 será a main
  */
