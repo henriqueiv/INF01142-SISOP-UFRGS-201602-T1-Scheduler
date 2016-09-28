@@ -12,15 +12,6 @@
 #define CYIELD_ERROR -1
 #define MAIN_THREAD_ID 0
 
-#define DEBUG 3
-
-#if defined(DEBUG) && DEBUG > 0
-#define DEBUG_PRINT(fmt, args...) fprintf(stderr, "DEBUG: %s:%d:%s(): " fmt, \
-__FILE__, __LINE__, __func__, ##args)
-#else
-#define DEBUG_PRINT(fmt, args...) /* Don't do anything in release builds */
-#endif
-
 // ================ LOCAL VARS ================
 
 TCB_t* running_thread;
@@ -38,22 +29,22 @@ int thread_id = 1;
 
 void print_queue(FILA2 queue) {
     if (FirstFila2(&queue) != 0) {
-        DEBUG_PRINT("ERRO ou FILA VAZIA\n");
+        printf("ERRO ou FILA VAZIA\n");
         return;
     }
     
     TCB_t* currentTCB = (TCB_t*) malloc(sizeof(TCB_t));
     int i = 0;
     do {  
-        DEBUG_PRINT("%d\n", i);
+        printf("%d\n", i);
         currentTCB = GetAtIteratorFila2(&queue);
         if (currentTCB == NULL)
             break;
             
-        DEBUG_PRINT("pos(%d) tid(%d)\n", i, currentTCB->tid);
+        printf("pos(%d) tid(%d)\n", i, currentTCB->tid);
         i++;
     } while (NextFila2(&queue) == 0);
-    DEBUG_PRINT("fim\n");
+    printf("fim\n");
 }
 
 
@@ -142,14 +133,14 @@ int is_blocked(int tid) {
 // ================ SCHEDULE ================
 
 void schedule() {
-    DEBUG_PRINT("SCHEDULE\n");
+    printf("SCHEDULE\n");
     if (FirstFila2(&ready) != 0) {
-        DEBUG_PRINT("ERRO OU FILA VAZIA\n");
+        printf("ERRO OU FILA VAZIA\n");
         return;
     }
     
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
-    DEBUG_PRINT("next_thread: tid(%d)\n", next_thread->tid);
+    printf("next_thread: tid(%d)\n", next_thread->tid);
     
     running_thread = next_thread;
     DeleteAtIteratorFila2(&ready);
@@ -199,7 +190,7 @@ int ccreate (void *(*start)(void *), void *arg) {
     if (getcontext(&context) == 0) {
         char* stack = (char*) malloc(SIGSTKSZ);
         if (stack == NULL) {
-            DEBUG_PRINT("Recursos insuficientes para criar nova thread!");
+            printf("Recursos insuficientes para criar nova thread!");
             return CCREATE_ERROR;
         }
         
@@ -224,7 +215,7 @@ int ccreate (void *(*start)(void *), void *arg) {
 }
 
 int cyield() {
-    DEBUG_PRINT("Running: %d\n", running_thread->tid);
+    printf("Running: %d\n", running_thread->tid);
     
     TCB_t* thread;
     thread = running_thread;
