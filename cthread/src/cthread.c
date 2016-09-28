@@ -36,17 +36,21 @@ void print_queue(FILA2 queue) {
     TCB_t* currentTCB = (TCB_t*) malloc(sizeof(TCB_t));
     int i = 0;
     do {  
-        printf("%d\n", i);
         currentTCB = GetAtIteratorFila2(&queue);
         if (currentTCB == NULL)
-            break;
-            
+            break;  
         printf("pos(%d) tid(%d)\n", i, currentTCB->tid);
         i++;
     } while (NextFila2(&queue) == 0);
-    printf("fim\n");
+    printf("------  fim ------\n");
 }
 
+void print_all_queues() {
+    printf("------ Ready ------\n");
+    print_queue(ready);
+    printf("------- Blocked -----\n");
+    print_queue(blocked);
+}
 
 /*!
  @brief Partiremos do 1 pois a 0 será a main
@@ -145,7 +149,7 @@ void destroy_join(join_t* join) {
 
 void release_threads_from_tid(int tid) {
     if(FirstFila2(&joins) != 0) {
-        printf("Fila de Joins vazia ou ERRO\n");
+        printf("SCHD: Fila de Joins vazia ou ERRO\n");
         return;
     }
     do {
@@ -163,7 +167,8 @@ void release_threads_from_tid(int tid) {
 // ================ SCHEDULE ================
 
 void schedule() {
-    printf("SCHEDULE\n");
+    printf("SCHEDULE*********************\n");
+    print_all_queues();
     
     //se running thread nula, quer dizer que foi yield. logo, se não nula devemos assumir que a thread encerrou
     if (running_thread != NULL) {
@@ -175,7 +180,7 @@ void schedule() {
         printf("ERRO OU FILA VAZIA\n");
         return;
     }
-    
+
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
     printf("next_thread: tid(%d)\n", next_thread->tid);
     
@@ -274,7 +279,7 @@ int cyield() {
 #define TARGETED 1
 int is_thread_targeted(int tid) {
     if(FirstFila2(&joins) != 0) {
-        printf("Fila de Joins vazia ou ERRO\n");
+        printf("CJOIN: Fila de Joins vazia ou ERRO\n");
         return NOT_TARGETED;
     }
     do {
@@ -293,6 +298,9 @@ int is_thread_targeted(int tid) {
 #define CJOIN_FAIL -3
 
 int cjoin(int tid) {
+    printf("CJOIN**************\n");
+    print_all_queues();
+
     if(tid == MAIN_THREAD_ID) {
         printf("não é permitido dar join na main. cjoin negado. \n");
         return CJOIN_FAIL;

@@ -12,8 +12,12 @@
 #define _XOPEN_SOURCE 600
 #define THREAD_COUNT 20
 
+int id0, id1; 
+
 void* func0(void *arg) {
     printf("Eu sou a thread ZERO: %d\n", *((int *)arg));
+    cjoin(id1);
+    printf("fim da thread ZERO\n");
 }
 
 void* func1(void *arg) {
@@ -21,7 +25,7 @@ void* func1(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
-    int id0, id1, i;
+    int i;
     i = 0;
     id0 = ccreate(func0, (void*)&i);
     i = 111;
