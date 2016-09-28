@@ -268,7 +268,8 @@ int csignal (csem_t *sem) {
     return -1;
 }
 
+#define CIDENTIFY_SUCCESS 0
 int cidentify (char *name, int size) {
     printf("Henrique Valcanaia - 240501\nPietro Degrazia - 243666\n");
-    return 1;
+    return CIDENTIFY_SUCCESS;
 }
