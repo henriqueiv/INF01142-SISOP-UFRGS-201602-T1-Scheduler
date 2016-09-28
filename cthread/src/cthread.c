@@ -8,6 +8,8 @@
 
 #include "../include/cthread.h"
 
+#define FREE(x) do { if ((x) != NULL) {free(x); x = NULL;} } while(0)
+
 #define CCREATE_ERROR -1
 #define CYIELD_ERROR -1
 #define MAIN_THREAD_ID 0
@@ -19,11 +21,11 @@ TCB_t* running_thread;
 FILA2 ready;
 FILA2 blocked;
 FILA2 joins;
+
 /*!
  @brief Partiremos do 1 pois a 0 será a main
  */
 int thread_id = 1;
-
 
 // ================ AUXILIAR FUNCTIONS ================
 
@@ -35,10 +37,10 @@ void print_queue(FILA2 queue) {
     
     TCB_t* currentTCB = (TCB_t*) malloc(sizeof(TCB_t));
     int i = 0;
-    do {  
+    do {
         currentTCB = GetAtIteratorFila2(&queue);
         if (currentTCB == NULL)
-            break;  
+            break;
         printf("pos(%d) tid(%d)\n", i, currentTCB->tid);
         i++;
     } while (NextFila2(&queue) == 0);
@@ -156,7 +158,7 @@ void schedule() {
         printf("ERRO OU FILA VAZIA\n");
         return;
     }
-
+    
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
     printf("next_thread: tid(%d)\n", next_thread->tid);
     
@@ -197,12 +199,16 @@ void init_queues() {
     CreateFila2(&joins);
 }
 
+void init() {
+    init_scheduler();
+    create_main_tcb();
+    init_queues();
+    initialized = 1;
+}
+
 int ccreate (void *(*start)(void *), void *arg) {
     if (!initialized) {
-        init_scheduler();
-        create_main_tcb();
-        init_queues();
-        initialized = 1;
+        init();
     }
     
     ucontext_t context;
@@ -274,11 +280,10 @@ int is_thread_targeted(int tid) {
 #define CJOIN_THREAD_FINISHED -1
 #define CJOIN_THREAD_ALREADY_JOINED -2
 #define CJOIN_FAIL -3
-
 int cjoin(int tid) {
     printf("CJOIN**************\n");
     print_all_queues();
-
+    
     if(tid == MAIN_THREAD_ID) {
         printf("não é permitido dar join na main. cjoin negado. \n");
         return CJOIN_FAIL;
@@ -310,7 +315,6 @@ int cjoin(int tid) {
 
 #define CSEM_INIT_SUCCESS 0
 #define CSEM_INIT_ERROR_CREATE_QUEUE -1
-
 int csem_init (csem_t *sem, int count) {
     sem->count = count;
     sem->fila = (PFILA2) malloc(sizeof(FILA2));
@@ -323,12 +327,92 @@ int csem_init (csem_t *sem, int count) {
     return CSEM_INIT_SUCCESS;
 }
 
+#define CWAIT_SUCCESS 0
+#define CWAIT_ERROR_CREATE_QUEUE -1
 int cwait (csem_t *sem) {
-    return -1;
+    if (!initialized) {
+        init();
+    }
+    
+    if (sem->fila == NULL) {
+        sem->fila = (PFILA2) malloc(sizeof(FILA2));
+        if (CreateFila2(sem->fila) != 0) {
+            printf("");
+            return CWAIT_ERROR_CREATE_QUEUE;
+        }
+    }
+    
+    sem->count--;
+    // sem recursos disponivel
+    if (sem->count < 0) {
+        TCB_t* thread;
+        thread = running_thread;
+        thread->state = THREAD_STATE_BLOCKED;
+        
+        AppendFila2(&blocked, (void*) thread);
+        AppendFila2(sem->fila, (void*) thread);
+        
+        running_thread = NULL;
+        
+        swapcontext(&thread->context, &scheduler);
+    }
+    
+    return CWAIT_SUCCESS;
 }
 
+#define REMOVE_THREAD_SUCCESS 0
+#define REMOVE_THREAD_ERROR_OR_EMPTY_QUEUE -1
+#define REMOVE_THREAD_TID_NOT_FOUND -2
+int remove_thread(int tid, FILA2 queue) {
+    if(FirstFila2(&queue) != 0) {
+        printf("Fila de Aptos vazia ou ERRO\n");
+        return REMOVE_THREAD_ERROR_OR_EMPTY_QUEUE;
+    }
+    
+    do {
+        TCB_t* thread = GetAtIteratorFila2(&queue);
+        if (thread == NULL)
+            return REMOVE_THREAD_TID_NOT_FOUND;
+        
+        if (thread->tid == tid) {
+            DeleteAtIteratorFila2(&queue);
+            return REMOVE_THREAD_SUCCESS;
+        }
+    } while (NextFila2(&blocked) == 0);
+    
+    return REMOVE_THREAD_SUCCESS;
+}
+
+#define CSIGNAL_SUCCESS 0
+#define CSIGNAL_ERROR_UNINITIALIZED -1
+#define CSIGNAL_ERROR_REMOVE_THREAD_FROM_BLOCKED -2
 int csignal (csem_t *sem) {
-    return -1;
+    if (!initialized) {
+        init();
+    }
+    
+    if (sem->fila == NULL) {
+        printf("Signal antes do wait ou semaforo nao inicializado");
+        return CSIGNAL_ERROR_UNINITIALIZED;
+    }
+    
+    if (FirstFila2(sem->fila) != 0) {
+        FREE(sem->fila);
+        return CSIGNAL_SUCCESS;
+    }
+    
+    sem->count++;
+    TCB_t* thread;
+    thread = (TCB_t*) GetAtIteratorFila2(sem->fila);
+    thread->state = THREAD_STATE_READY;
+    DeleteAtIteratorFila2(sem->fila);
+    
+    if (remove_thread(thread->tid, blocked) != 0) {
+        printf("Erro ao remover thread(%d) da fila de bloqueados", thread->tid);
+        return CSIGNAL_ERROR_REMOVE_THREAD_FROM_BLOCKED;
+    }
+    
+    return CSIGNAL_SUCCESS;
 }
 
 #define CIDENTIFY_SUCCESS 0
