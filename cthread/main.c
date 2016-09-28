@@ -12,15 +12,15 @@
 #define _XOPEN_SOURCE 600
 #define THREAD_COUNT 2
 
-void* func0(void* arg) {
-    printf("Eu sou outra thread imprimindo %d\n", *((int*) arg));
+void* func0(void *arg) {
+    printf("Eu sou outra thread imprimindo %d\n", *((int *)arg));
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     int tid = -1;
     int i = 1;
     for (i = 1; i < THREAD_COUNT; i++) {
-        tid = ccreate(func0, (void*) &i);
+        tid = ccreate(func0, (void*)&i);
         printf("main(%d) | tid(%d)\n", i, tid);
         cyield();
         printf("pos Yield\n");
