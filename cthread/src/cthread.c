@@ -29,7 +29,7 @@ int thread_id = 1;
 
 void print_queue(FILA2 queue) {
     if (FirstFila2(&queue) != 0) {
-        printf("ERRO ou FILA VAZIA\n");
+        printf("-\n");
         return;
     }
     
@@ -39,17 +39,33 @@ void print_queue(FILA2 queue) {
         currentTCB = GetAtIteratorFila2(&queue);
         if (currentTCB == NULL)
             break;  
-        printf("pos(%d) tid(%d)\n", i, currentTCB->tid);
+        printf("tid(%d)\n", currentTCB->tid);
         i++;
     } while (NextFila2(&queue) == 0);
-    printf("------  fim ------\n");
+    // printf("------  fim ------\n");
+}
+
+void print_joins() {
+     if(FirstFila2(&joins) != 0) {
+        printf("-\n");
+        return;
+    }
+    do {
+        join_t* join = GetAtIteratorFila2(&joins);
+        if (join == NULL)
+            return;
+        printf("(%d) (%d)\n",join->blocked_thread->tid, join->target_thread->tid);
+    } while (NextFila2(&joins) == 0);
+    return;
 }
 
 void print_all_queues() {
-    printf("------ Ready ------\n");
+    printf("Ready\n");
     print_queue(ready);
-    printf("------- Blocked -----\n");
+    printf("Blocked\n");
     print_queue(blocked);
+    printf("Joins\n");
+    print_joins();
 }
 
 /*!
@@ -129,6 +145,7 @@ TCB_t* get_thread_with_id(int tid, PFILA2 queue) {
 }
 
 void destroy_join(join_t* join) {
+    printf("vai destruir join entre %d e %d\n",join->blocked_thread->tid, join->target_thread->tid);
     if(FirstFila2(&blocked) != 0) {
         printf("Fila de Aptos vazia ou ERRO\n");
         return;
@@ -172,6 +189,7 @@ void schedule() {
     
     //se running thread nula, quer dizer que foi yield. logo, se não nula devemos assumir que a thread encerrou
     if (running_thread != NULL) {
+        printf("Running Thread Existe; Assume que a thread encerrou\n");
         release_threads_from_tid(running_thread->tid);
         running_thread = NULL;
     }
@@ -298,7 +316,7 @@ int is_thread_targeted(int tid) {
 #define CJOIN_FAIL -3
 
 int cjoin(int tid) {
-    printf("CJOIN**************\n");
+    printf("CJOIN (%d)************\n", tid);
     print_all_queues();
 
     if(tid == MAIN_THREAD_ID) {
@@ -326,6 +344,7 @@ int cjoin(int tid) {
     calling_thread->state = THREAD_STATE_BLOCKED;
     
     AppendFila2(&blocked, (void*)calling_thread);
+    running_thread = NULL;
     swapcontext(&calling_thread->context, &scheduler);
     return CJOIN_SUCCESS;
 }
