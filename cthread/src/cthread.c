@@ -124,10 +124,53 @@ TCB_t* get_thread_with_id(int tid, PFILA2 queue) {
     return NULL;
 }
 
+void destroy_join(join_t* join) {
+    if(FirstFila2(&blocked) != 0) {
+        printf("Fila de Aptos vazia ou ERRO\n");
+        return;
+    }
+    do {
+        TCB_t* thread = GetAtIteratorFila2(&blocked);
+        if (thread == NULL)
+            return;
+        if (thread == join->blocked_thread) {
+            thread->state = THREAD_STATE_READY;
+            DeleteAtIteratorFila2(&blocked);
+            AppendFila2(&ready, (void*) thread);
+            return;
+        }
+    } while (NextFila2(&blocked) == 0);
+    return;
+}
+
+void release_threads_from_tid(int tid) {
+    if(FirstFila2(&joins) != 0) {
+        printf("Fila de Joins vazia ou ERRO\n");
+        return;
+    }
+    do {
+        join_t* join = GetAtIteratorFila2(&joins);
+        if (join == NULL)
+            return;
+        if (join->target_thread->tid == tid) {
+            destroy_join(join);
+            return;
+        }
+    } while (NextFila2(&joins) == 0);
+    return;
+}
+
 // ================ SCHEDULE ================
 
 void schedule() {
     printf("SCHEDULE\n");
+    
+    //se running thread nula, quer dizer que foi yield. logo, se não nula devemos assumir que a thread encerrou
+    if (running_thread != NULL) {
+        release_threads_from_tid(running_thread->tid);
+        running_thread = NULL;
+    }
+    
     if (FirstFila2(&ready) != 0) {
         printf("ERRO OU FILA VAZIA\n");
         return;
@@ -270,6 +313,12 @@ int cjoin(int tid) {
     join->blocked_thread = running_thread;
     join->target_thread = target_thread;
     AppendFila2(&joins, (void*) join);
+    
+    TCB_t* calling_thread = running_thread;
+    calling_thread->state = THREAD_STATE_BLOCKED;
+    
+    AppendFila2(&blocked, (void*)calling_thread);
+    swapcontext(&calling_thread->context, &scheduler);
     return CJOIN_SUCCESS;
 }
 
