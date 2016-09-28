@@ -238,7 +238,7 @@ int cjoin(int tid) {
 
 int csem_init (csem_t *sem, int count) {
     sem->count = count;
-    sem->fila = (PFILA2) malloc(sizeof(PFILA2));
+    sem->fila = (PFILA2) malloc(sizeof(FILA2));
     
     if (CreateFila2(sem->fila) != 0) {
         printf("Erro ao alocar fila para o semaforo");
