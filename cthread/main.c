@@ -22,8 +22,9 @@ int main(int argc, char *argv[]) {
     for (i = 1; i < THREAD_COUNT; i++) {
         tid = ccreate(func0, (void*)&i);
         printf("main(%d) | tid(%d)\n", i, tid);
-        cyield();
-        printf("pos Yield\n");
+//        cyield();
+        cjoin(tid);
+        printf("pos join\n");
     }
     
     printf("fim da main\n");
