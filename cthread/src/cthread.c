@@ -83,30 +83,6 @@ int generate_thread_id() {
 }
 
 /*!
- @brief Adiciona um TCB a uma fila
- */
-int add_thread_to_queue(TCB_t thread, FILA2 queue) {
-    int result = AppendFila2(&queue, (void*) &thread);
-    return result;
-}
-
-/*!
- @brief Adiciona um TCB a fila de aptos
- */
-int add_thread_to_ready_queue(TCB_t thread) {
-    int result = add_thread_to_queue(thread, ready);
-    return result;
-}
-
-/*!
- @brief Adiciona um TCB a fila de bloqueados
- */
-int add_thread_to_blocked_queue(TCB_t thread) {
-    int result = add_thread_to_queue(thread, blocked);
-    return result;
-}
-
-/*!
  @brief Procura um TCB na fila "queue" com o thread id "tid"
  */
 int find_thread_with_id(int tid, FILA2 queue) {
@@ -211,6 +187,7 @@ int ccreate (void *(*start)(void *), void *arg) {
 }
 
 int cyield() {
+    printf("CYIELD\n");
     printf("Running: %d\n", running_thread->tid);
     
     TCB_t* thread;
@@ -221,7 +198,8 @@ int cyield() {
         printf("Fila de Aptos Vazia, cyield negado!\n");
         return CYIELD_ERROR;
     }
-    if (AppendFila2(&ready, (void*)thread) != 0) {
+    
+    if (AppendFila2(&ready, (void*) thread) != 0) {
         printf("Erro adicionando thread a fila de aptos. cyield negado.\n");
         return CYIELD_ERROR;
     }
@@ -255,8 +233,19 @@ int cjoin(int tid) {
     return CJOIN_THREAD_FINISHED;
 }
 
+#define CSEM_INIT_SUCCESS 0
+#define CSEM_INIT_ERROR_CREATE_QUEUE -1
+
 int csem_init (csem_t *sem, int count) {
-    return -1;
+    sem->count = count;
+    sem->fila = (PFILA2) malloc(sizeof(PFILA2));
+    
+    if (CreateFila2(sem->fila) != 0) {
+        printf("Erro ao alocar fila para o semaforo");
+        return CSEM_INIT_ERROR_CREATE_QUEUE;
+    }
+    
+    return CSEM_INIT_SUCCESS;
 }
 
 int cwait (csem_t *sem) {
