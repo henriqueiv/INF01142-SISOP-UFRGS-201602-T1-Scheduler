@@ -36,17 +36,21 @@ void print_queue(FILA2 queue) {
     TCB_t* currentTCB = (TCB_t*) malloc(sizeof(TCB_t));
     int i = 0;
     do {  
-        printf("%d\n", i);
         currentTCB = GetAtIteratorFila2(&queue);
         if (currentTCB == NULL)
-            break;
-            
+            break;  
         printf("pos(%d) tid(%d)\n", i, currentTCB->tid);
         i++;
     } while (NextFila2(&queue) == 0);
-    printf("fim\n");
+    printf("------  fim ------\n");
 }
 
+void print_all_queues() {
+    printf("------ Ready ------\n");
+    print_queue(ready);
+    printf("------- Blocked -----\n");
+    print_queue(blocked);
+}
 
 /*!
  @brief Partiremos do 1 pois a 0 será a main
@@ -83,38 +87,76 @@ int generate_thread_id() {
 }
 
 /*!
- @brief Procura um TCB na fila "queue" com o thread id "tid"
+ @brief Retorna um TCB na fila "queue" com o thread id "tid"
  */
-int find_thread_with_id(int tid, FILA2 queue) {
-    struct sFilaNode2 *node = (struct sFilaNode2*) malloc(sizeof(struct sFilaNode2));
-    node = queue.first;
-    while (node != NULL) {
-        if (((TCB_t*) node)->tid == tid) {
-            return 1;
-        }
-        node = node->next;
+TCB_t* get_thread_with_id(int tid, PFILA2 queue) {
+    if (FirstFila2(queue) != 0) {
+        printf("Buscando TCB: Fila Vazia ou erro\n");
+        return NULL;
     }
-    
-    return 0;
+    do {
+        TCB_t* thread = GetAtIteratorFila2(queue);
+        if (thread == NULL)
+            return NULL;
+        if (thread->tid == tid)
+            return thread;
+    } while (NextFila2(queue) == 0);
+    return NULL;
 }
 
-int is_ready(int tid) {
-    return find_thread_with_id(tid, ready);
+void destroy_join(join_t* join) {
+    if(FirstFila2(&blocked) != 0) {
+        printf("Fila de Aptos vazia ou ERRO\n");
+        return;
+    }
+    do {
+        TCB_t* thread = GetAtIteratorFila2(&blocked);
+        if (thread == NULL)
+            return;
+        if (thread == join->blocked_thread) {
+            thread->state = THREAD_STATE_READY;
+            DeleteAtIteratorFila2(&blocked);
+            AppendFila2(&ready, (void*) thread);
+            return;
+        }
+    } while (NextFila2(&blocked) == 0);
+    return;
 }
 
-int is_blocked(int tid) {
-    return find_thread_with_id(tid, blocked);
+void release_threads_from_tid(int tid) {
+    if(FirstFila2(&joins) != 0) {
+        printf("SCHD: Fila de Joins vazia ou ERRO\n");
+        return;
+    }
+    do {
+        join_t* join = GetAtIteratorFila2(&joins);
+        if (join == NULL)
+            return;
+        if (join->target_thread->tid == tid) {
+            destroy_join(join);
+            return;
+        }
+    } while (NextFila2(&joins) == 0);
+    return;
 }
 
 // ================ SCHEDULE ================
 
 void schedule() {
-    printf("SCHEDULE\n");
+    printf("SCHEDULE*********************\n");
+    print_all_queues();
+    
+    //se running thread nula, quer dizer que foi yield. logo, se não nula devemos assumir que a thread encerrou
+    if (running_thread != NULL) {
+        release_threads_from_tid(running_thread->tid);
+        running_thread = NULL;
+    }
+    
     if (FirstFila2(&ready) != 0) {
         printf("ERRO OU FILA VAZIA\n");
         return;
     }
-    
+
     TCB_t* next_thread = GetAtIteratorFila2(&ready);
     printf("next_thread: tid(%d)\n", next_thread->tid);
     
@@ -211,26 +253,59 @@ int cyield() {
     return CYIELD_SUCCESS;
 }
 
+#define NOT_TARGETED 0
+#define TARGETED 1
+int is_thread_targeted(int tid) {
+    if(FirstFila2(&joins) != 0) {
+        printf("CJOIN: Fila de Joins vazia ou ERRO\n");
+        return NOT_TARGETED;
+    }
+    do {
+        join_t* join = GetAtIteratorFila2(&joins);
+        if (join == NULL)
+            return NOT_TARGETED;
+        if (join->target_thread->tid == tid)
+            return TARGETED;
+    } while (NextFila2(&joins) == 0);
+    return NOT_TARGETED;
+}
+
 #define CJOIN_SUCCESS 0
 #define CJOIN_THREAD_FINISHED -1
 #define CJOIN_THREAD_ALREADY_JOINED -2
+#define CJOIN_FAIL -3
 
 int cjoin(int tid) {
-    //checar se já está bloqueada?
+    printf("CJOIN**************\n");
+    print_all_queues();
+
+    if(tid == MAIN_THREAD_ID) {
+        printf("não é permitido dar join na main. cjoin negado. \n");
+        return CJOIN_FAIL;
+    }
+    //achar tcb do tid
+    TCB_t* target_thread = get_thread_with_id(tid, &ready);
+    if (target_thread == NULL) {
+        printf("Thread alvo não encontrada.\n");
+        return CJOIN_FAIL;
+    }
     //checar se thread alvo já tem alguem no aguardo
-    
-    if (join_list[tid] != NULL) {
+    if (is_thread_targeted(tid) == TARGETED) {
+        printf("Já há uma thread esperando por está\n");
         return CJOIN_THREAD_ALREADY_JOINED;
     }
+    //cria o join
+    join_t* join = (join_t*) malloc(sizeof(join_t));
+    join->blocked_thread = running_thread;
+    join->target_thread = target_thread;
+    AppendFila2(&joins, (void*) join);
     
-    if ((is_ready(tid) == 1) || (is_blocked(tid) == 1)) {
-        // join_list[tid] = &running_thread;
-        // add_thread_to_blocked_queue(running_thread);
-        
-        return CJOIN_SUCCESS;
-    }
+    TCB_t* calling_thread = running_thread;
+    calling_thread->state = THREAD_STATE_BLOCKED;
     
-    return CJOIN_THREAD_FINISHED;
+    AppendFila2(&blocked, (void*)calling_thread);
+    swapcontext(&calling_thread->context, &scheduler);
+    return CJOIN_SUCCESS;
 }
 
 #define CSEM_INIT_SUCCESS 0
