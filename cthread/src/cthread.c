@@ -42,7 +42,7 @@ void print_queue(FILA2 queue) {
         if (currentTCB == NULL)
             break;
 
-        printf("tid(%d)\n", currentTCB->tid);
+        printf("tid(%d) -- ticket(%d)\n", currentTCB->tid, currentTCB->ticket);
         i++;
     } while (NextFila2(&queue) == 0);
 }
@@ -160,6 +160,43 @@ void release_threads_from_tid(int tid) {
 }
 
 // ================ SCHEDULE ================
+#define WINNER_SHOULD_CHANGE 1
+#define WINNER_SHOULD_NOT_CHANGE 0
+int winner_should_change(TCB_t* winner, TCB_t* contestant, int ticket) {
+    int winner_to_ticket = abs(winner->ticket - ticket);
+    int contestant_to_ticket = abs(contestant->ticket - ticket);
+    
+    if (contestant_to_ticket > winner_to_ticket)
+        return WINNER_SHOULD_NOT_CHANGE;
+
+    if (winner_to_ticket > contestant_to_ticket)
+        return WINNER_SHOULD_CHANGE;
+    
+    if (winner->tid > contestant-> tid)
+        return WINNER_SHOULD_CHANGE;
+    
+    return WINNER_SHOULD_NOT_CHANGE;
+}
+
+TCB_t* find_next_thread() {
+    if (FirstFila2(&ready) != 0) {
+        printf("Fila de Aptos vazia. Ou Erro.\n");
+        return NULL;
+    }
+    int ticket = generate_ticket();
+    printf("********* TICKET = %d ************\n", ticket);
+    TCB_t *winner = GetAtIteratorFila2(&ready);
+    TCB_t *contestant;
+    
+    while (NextFila2(&ready) == 0) {
+        contestant = GetAtIteratorFila2(&ready);
+        if (contestant == NULL) break;
+        if (winner_should_change(winner, contestant, ticket)) {
+            winner = contestant;
+        }
+    }
+    return winner;
+}
 
 void schedule() {
     printf("SCHEDULE*********************\n");
@@ -173,11 +210,11 @@ void schedule() {
     }
     
     if (FirstFila2(&ready) != 0) {
-        printf("ERRO OU FILA VAZIA\n");
+        printf("Fila de Aptos vazia. Ou Erro.\n");
         return;
     }
     
-    TCB_t* next_thread = GetAtIteratorFila2(&ready);
+    TCB_t* next_thread = find_next_thread();
     printf("next_thread: tid(%d)\n", next_thread->tid);
     
     running_thread = next_thread;
