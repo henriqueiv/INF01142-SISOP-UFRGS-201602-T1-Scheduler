@@ -17,7 +17,7 @@ BIN_DIR=./bin
 SRC_DIR=./src
 TST_DIR=./teste
 
-all: objetos mvObj libcthread.a mvLib main test
+all: objetos mvObj libcthread.a mvLib main testCCREATE testCJOIN testCYIELD
 
 objetos: $(SRC_DIR)/cthread.c $(INC_DIR)/cdata.h $(INC_DIR)/cthread.h $(INC_DIR)/support.h
 	$(CC) -c $(SRC_DIR)/cthread.c -Wall
@@ -34,11 +34,14 @@ mvLib:
 main:
 	$(CC) -o myprog main.c -L$(LIB_DIR) -lcthread -Wall
 
-testeCreate:
-	$(CC) -o $(TST_DIR)/testeCreate $(TST_DIR)/test_ccreate.c -L$(LIB_DIR) -lcthread -Wall
+testCCREATE:
+	$(CC) -o $(TST_DIR)/test_ccreate $(TST_DIR)/test_ccreate.c -L$(LIB_DIR) -lcthread -Wall
 
-test:
+testCJOIN:
 	$(CC) -o $(TST_DIR)/test_cjoin $(TST_DIR)/test_cjoin.c -L$(LIB_DIR) -lcthread -Wall
 
+testCYIELD:
+	$(CC) -o $(TST_DIR)/test_cyield $(TST_DIR)/test_cyield.c -L$(LIB_DIR) -lcthread -Wall
+
 clean:
-	rm -rf myprog $(LIB_DIR)/*.a $(BIN_DIR)/cthread.o $(TST_DIR)/*.o $(TST_DIR)/testeCreate $(SRC_DIR)/*~ $(INC_DIR)/*~ *~
+	rm -rf myprog $(LIB_DIR)/*.a $(BIN_DIR)/cthread.o $(TST_DIR)/*.o $(TST_DIR)/test_cjoin $(TST_DIR)/test_ccreate $(TST_DIR)/test_cyield $(SRC_DIR)/*~ $(INC_DIR)/*~ *~

@@ -6,21 +6,22 @@
 //  Copyright © 2016 Henrique Valcanaia. All rights reserved.
 //
 
-#include "test_ccreate.h"
+#include "../include/cthread.h"
 
-void func0(void *arg) {
-    printf("Eu sou a thread ID0 imprimindo %d\n", *((int *)arg));
+void* func2(void *arg) {
+    printf("Eu sou a thread ID2 imprimindo %d\n", *((int *)arg));
+    return 0;
 }
 
-void func1(void *arg) {
+void* func1(void *arg) {
     printf("Eu sou a thread ID1 imprimindo %d\n", *((int *)arg));
+    ccreate(func2, (void*)&arg);
+    return 0;
 }
 
-void main() {
-    int argc = 12;
-    
-    // enum CCREATE_STATUS tid = ccreate(&func0, (void*) argc);
-    // if (tid == ERROR) {
-    //    } else {
-    // }
+int main(int argc, char *argv[]) {
+    argc = 10;
+    cjoin(ccreate(func1, (void*)&argc));
+    printf("Main chegou ao fim\n");
+    return 0;
 }
