@@ -184,7 +184,7 @@ TCB_t* find_next_thread() {
         return NULL;
     }
     int ticket = generate_ticket();
-    printf("********* TICKET = %d ************\n", ticket);
+    printf("TICKET = %d \n", ticket);
     TCB_t *winner = GetAtIteratorFila2(&ready);
     TCB_t *contestant;
     
@@ -198,8 +198,32 @@ TCB_t* find_next_thread() {
     return winner;
 }
 
+#define REMOVE_THREAD_SUCCESS 0
+#define REMOVE_THREAD_ERROR_OR_EMPTY_QUEUE -1
+#define REMOVE_THREAD_TID_NOT_FOUND -2
+int remove_thread(int tid, FILA2 queue) {
+    if(FirstFila2(&queue) != 0) {
+        printf("Fila vazia ou ERRO\n");
+        return REMOVE_THREAD_ERROR_OR_EMPTY_QUEUE;
+    }
+    TCB_t* thread = (TCB_t*) malloc(sizeof(TCB_t));
+    do {
+        thread = GetAtIteratorFila2(&queue);
+        if (thread == NULL)
+            return REMOVE_THREAD_TID_NOT_FOUND;
+        
+        if (thread->tid == tid) {
+            printf("REMOVTHREAD: target = %d, found = %d\n",tid, thread->tid );
+            printf("Delete:%d\n", DeleteAtIteratorFila2(&queue));
+            return REMOVE_THREAD_SUCCESS;
+        }
+    } while (NextFila2(&queue) == 0);
+    
+    return REMOVE_THREAD_SUCCESS;
+}
+
 void schedule() {
-    printf("SCHEDULE*********************\n");
+    printf("***************** SCHEDULE *****************\n");
     print_all_queues();
     
     //se running thread nula, quer dizer que foi yield. logo, se não nula devemos assumir que a thread encerrou
@@ -216,11 +240,12 @@ void schedule() {
     
     TCB_t* next_thread = find_next_thread();
     printf("next_thread: tid(%d)\n", next_thread->tid);
-    
+    print_all_queues();
     running_thread = next_thread;
-    DeleteAtIteratorFila2(&ready);
+    if (remove_thread(next_thread->tid, ready) != 0) 
+        printf("problema ao deletar thread corrente da fila de aptos\n");
     running_thread->state = THREAD_STATE_RUNNING;
-    
+    print_all_queues();
     setcontext(&running_thread->context);
 }
 
@@ -386,6 +411,7 @@ int csem_init (csem_t *sem, int count) {
 #define CWAIT_SUCCESS 0
 #define CWAIT_ERROR_CREATE_QUEUE -1
 int cwait (csem_t *sem) {
+    printf("***************** CWAIT *****************\n");
     if (!initialized) {
         init();
     }

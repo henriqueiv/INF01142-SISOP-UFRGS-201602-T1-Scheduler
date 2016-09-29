@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
         printf("Main Erro: CWAIT\n");
         return 0;
     }
+
     printf("Main: ZONA CRITICA. yield.\n");
     cyield();
 
@@ -65,6 +66,7 @@ int main(int argc, char *argv[]) {
         printf("Main Erro: CSIGNAL\n");
         return 0;
     }
+
     printf("MAIN FORA DA ZONA. yield.\n");
     cyield();
 
