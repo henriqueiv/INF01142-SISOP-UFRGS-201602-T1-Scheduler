@@ -356,7 +356,7 @@ int cwait (csem_t *sem) {
     if (sem->fila == NULL) {
         sem->fila = (PFILA2) malloc(sizeof(FILA2));
         if (CreateFila2(sem->fila) != 0) {
-            printf("");
+            printf("\n");
             return CWAIT_ERROR_CREATE_QUEUE;
         }
     }
