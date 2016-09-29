@@ -228,7 +228,8 @@ int ccreate (void *(*start)(void *), void *arg) {
     if (!initialized) {
         init();
     }
-    
+    printf("CCRIATE chamado por: %d\n", running_thread->tid);
+
     ucontext_t context;
     if (getcontext(&context) == 0) {
         char tcb_stack[SIGSTKSZ];
@@ -253,8 +254,7 @@ int ccreate (void *(*start)(void *), void *arg) {
 }
 
 int cyield() {
-    printf("CYIELD\n");
-    printf("Running: %d\n", running_thread->tid);
+    printf("CYIELD chamado por: %d\n", running_thread->tid);
     
     TCB_t* thread;
     thread = running_thread;
@@ -299,7 +299,7 @@ int is_thread_targeted(int tid) {
 #define CJOIN_THREAD_ALREADY_JOINED -2
 #define CJOIN_FAIL -3
 int cjoin(int tid) {
-    printf("CJOIN (%d)************\n", tid);
+    printf("CJOIN chamado por: %d\nPara esperar: %d", running_thread->tid, tid);
     print_all_queues();
     
     if(tid == MAIN_THREAD_ID) {
