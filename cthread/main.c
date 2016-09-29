@@ -12,51 +12,62 @@
 #define _XOPEN_SOURCE 600
 #define THREAD_COUNT 20
 
-void* func3(void *arg);
 void* func1(void *arg);
-void* func2(void *arg);
+// void* func2(void *arg);
+csem_t mutex;
+
 
 void* func1(void *arg) {
     printf("inicio thread 1.\n");
-    ccreate(func2, NULL);
-    printf("Thread 1: criou thread 2 e vai dar yield.\n");
+    if (cwait(&mutex) != 0) {
+        printf("T1 Erro: CWAIT\n");
+        return 0;
+    }
+    printf("T1 NA ZONA CRITICA. yield.\n");
     cyield();
-    printf("fim da thread UM\n");
+    if (csignal(&mutex) != 0) {
+        printf("T1 Erro: CSIGNAL\n");
+        return 0;
+    }
+    printf("T1 FORA DA ZONA\n");
+    // ccreate(func2, NULL);
+    // printf("Thread 1: criou thread 2 e vai dar yield.\n");
+    // cyield();
+    // printf("fim da thread UM\n");
     return 0;
 }
 
-void* func3(void *arg) {
-    printf("inicio thread 3\n");
-    printf("thread 3 vai dar yield.\n");
-    cyield();
-    printf("fim da thread 3\n");
-    return 0;
-}
-
-void* func2(void *arg) {
-    printf("inicio thread 2\n");
-    ccreate(func3, NULL);
-    printf("Thread 2: criou thread 3 e vai dar yield.\n");
-    cyield();
-    printf("fim da thread DOIS\n");
-    return 0;
-}
+// void* func2(void *arg) {
+//     printf("inicio thread 2\n");
+//     ccreate(func3, NULL);
+//     printf("Thread 2: criou thread 3 e vai dar yield.\n");
+//     cyield();
+//     printf("fim da thread DOIS\n");
+//     return 0;
+// }
 
 int main(int argc, char *argv[]) {
+    if (csem_init(&mutex, 1) != 0){
+        printf("Erro ao criar MUTEX\n");
+        return 0;
+    }
+
     ccreate(func1, NULL);
     
-    printf("Main criou Thread 1 e vai dar yield.\n");
+    if (cwait(&mutex) != 0) {
+        printf("Main Erro: CWAIT\n");
+        return 0;
+    }
+    printf("Main: ZONA CRITICA. yield.\n");
     cyield();
 
-    printf("Main recebeu o processador e vai dar yield.\n");
+    if (csignal(&mutex) != 0) {
+        printf("Main Erro: CSIGNAL\n");
+        return 0;
+    }
+    printf("MAIN FORA DA ZONA. yield.\n");
     cyield();
 
-    printf("Main recebeu o processador e vai dar yield.\n");
-    cyield();
     
-    printf("Main recebeu o processador e vai dar yield.\n");
-    cyield();
-
-    printf("Main chegou ao fim.\n");    
     return 0;
 }

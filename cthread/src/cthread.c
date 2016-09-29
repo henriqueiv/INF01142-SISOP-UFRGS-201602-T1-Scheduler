@@ -379,33 +379,36 @@ int cwait (csem_t *sem) {
     return CWAIT_SUCCESS;
 }
 
-#define REMOVE_THREAD_SUCCESS 0
-#define REMOVE_THREAD_ERROR_OR_EMPTY_QUEUE -1
-#define REMOVE_THREAD_TID_NOT_FOUND -2
-int remove_thread(int tid, FILA2 queue) {
+#define MOVE_THREAD_SUCCESS 0
+#define MOVE_THREAD_ERROR_OR_EMPTY_QUEUE -1
+#define MOVE_THREAD_TID_NOT_FOUND -2
+int move_thread(int tid, FILA2 queue, FILA2 dest) {
     if(FirstFila2(&queue) != 0) {
-        printf("Fila de Aptos vazia ou ERRO\n");
-        return REMOVE_THREAD_ERROR_OR_EMPTY_QUEUE;
+        printf("Fila de Origem vazia ou ERRO\n");
+        return MOVE_THREAD_ERROR_OR_EMPTY_QUEUE;
     }
-    
+    TCB_t* thread = (TCB_t*) malloc(sizeof(TCB_t));
     do {
-        TCB_t* thread = GetAtIteratorFila2(&queue);
+        thread = GetAtIteratorFila2(&queue);
         if (thread == NULL)
-            return REMOVE_THREAD_TID_NOT_FOUND;
+            return MOVE_THREAD_TID_NOT_FOUND;
         
         if (thread->tid == tid) {
-            DeleteAtIteratorFila2(&queue);
-            return REMOVE_THREAD_SUCCESS;
+            printf("MOVTHREAD: target = %d, found = %d\n",tid, thread->tid );
+            printf("Append: %d\n", AppendFila2(&dest, &thread));
+            printf("Delete:%d\n", DeleteAtIteratorFila2(&queue));
+            return MOVE_THREAD_SUCCESS;
         }
-    } while (NextFila2(&blocked) == 0);
+    } while (NextFila2(&queue) == 0);
     
-    return REMOVE_THREAD_SUCCESS;
+    return MOVE_THREAD_SUCCESS;
 }
 
 #define CSIGNAL_SUCCESS 0
 #define CSIGNAL_ERROR_UNINITIALIZED -1
 #define CSIGNAL_ERROR_REMOVE_THREAD_FROM_BLOCKED -2
 int csignal (csem_t *sem) {
+    printf("************** CSIGNAL **************\n");
     if (!initialized) {
         init();
     }
@@ -424,14 +427,16 @@ int csignal (csem_t *sem) {
     TCB_t* thread;
     thread = (TCB_t*) GetAtIteratorFila2(sem->fila);
     thread->state = THREAD_STATE_READY;
+    print_all_queues();
+    printf("SIGNAL VAI LIBERAR THREAD: %d\n", thread->tid);
     DeleteAtIteratorFila2(sem->fila);
     
-    if (remove_thread(thread->tid, blocked) != 0) {
+    if (move_thread(thread->tid, blocked, ready) != 0) {
         printf("Erro ao remover thread(%d) da fila de bloqueados", thread->tid);
         return CSIGNAL_ERROR_REMOVE_THREAD_FROM_BLOCKED;
     }
-    
-    return CSIGNAL_SUCCESS;
+    print_all_queues();
+    return CSIGNAL_SUCCESS; 
 }
 
 #define CIDENTIFY_SUCCESS 0
