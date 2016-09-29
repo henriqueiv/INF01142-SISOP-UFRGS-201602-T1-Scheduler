@@ -31,19 +31,17 @@ int thread_id = 1;
 
 void print_queue(FILA2 queue) {
     if (FirstFila2(&queue) != 0) {
-        printf("-\n");
+        printf("Fila vazia\n");
         return;
     }
     
-    TCB_t* currentTCB = (TCB_t*) malloc(sizeof(TCB_t));
-    int i = 0;
+    TCB_t* currentTCB;
     do {
         currentTCB = GetAtIteratorFila2(&queue);
         if (currentTCB == NULL)
             break;
 
         printf("tid(%d) -- ticket(%d)\n", currentTCB->tid, currentTCB->ticket);
-        i++;
     } while (NextFila2(&queue) == 0);
 }
 
@@ -290,8 +288,8 @@ int ccreate (void *(*start)(void *), void *arg) {
     if (!initialized) {
         init();
     }
-    printf("CCRIATE chamado por: %d\n", running_thread->tid);
-
+    printf("CCREATE chamado por: %d\n", running_thread->tid);
+    
     ucontext_t context;
     if (getcontext(&context) == 0) {
         char tcb_stack[SIGSTKSZ];

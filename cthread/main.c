@@ -47,24 +47,25 @@ void* func1(void *arg) {
 // }
 
 void* t2() {
-    printf("2 rodando");
-    printf("2 acabou");
+    printf("2 rodando\n");
+    printf("2 acabou\n");
 }
 
 void* t1() {
-    printf("t1 antes de criar 2");
+    printf("t1 antes de criar 2"\n);
     int id2 = ccreate(t2, NULL);
-    printf("t1 depois de criar %d", id2);
+    printf("t1 depois de criar %d\n", id2);
+    exit(0);
     cjoin(id2);
-    printf("t1 depois do join na t2");
+    printf("t1 depois do join na t2\n");
 }
 
 int main(int argc, char *argv[]) {
     int id0 = ccreate(t1, NULL);
     cjoin(id0);
     
-    // cria 1,
-    // join
+    // cria 1
+    // main join 1
     // 1 cria 2
     // 1 join 2
     // 1 print
@@ -73,7 +74,7 @@ int main(int argc, char *argv[]) {
     
     return 0;
     
-    
+    /*
     if (csem_init(&mutex, 1) != 0){
         printf("Erro ao criar MUTEX\n");
         return 0;
@@ -96,7 +97,7 @@ int main(int argc, char *argv[]) {
     
     printf("MAIN FORA DA ZONA. yield.\n");
     cyield();
-    
+    */
     
     return 0;
 }
