@@ -1,6 +1,9 @@
 cthread/bin/
 cthread/lib/
 cthread/myprog
+cthread/teste/*
+!cthread/teste//**/
+!cthread/teste/*.*
 
 # Created by https://www.gitignore.io/api/xc,xcode,c,linux
 

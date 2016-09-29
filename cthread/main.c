@@ -46,30 +46,57 @@ void* func1(void *arg) {
 //     return 0;
 // }
 
+void* t2() {
+    printf("2 rodando");
+    printf("2 acabou");
+}
+
+void* t1() {
+    printf("t1 antes de criar 2");
+    int id2 = ccreate(t2, NULL);
+    printf("t1 depois de criar %d", id2);
+    cjoin(id2);
+    printf("t1 depois do join na t2");
+}
+
 int main(int argc, char *argv[]) {
+    int id0 = ccreate(t1, NULL);
+    cjoin(id0);
+    
+    // cria 1,
+    // join
+    // 1 cria 2
+    // 1 join 2
+    // 1 print
+    // print
+    
+    
+    return 0;
+    
+    
     if (csem_init(&mutex, 1) != 0){
         printf("Erro ao criar MUTEX\n");
         return 0;
     }
-
+    
     ccreate(func1, NULL);
     
     if (cwait(&mutex) != 0) {
         printf("Main Erro: CWAIT\n");
         return 0;
     }
-
+    
     printf("Main: ZONA CRITICA. yield.\n");
     cyield();
-
+    
     if (csignal(&mutex) != 0) {
         printf("Main Erro: CSIGNAL\n");
         return 0;
     }
-
+    
     printf("MAIN FORA DA ZONA. yield.\n");
     cyield();
-
+    
     
     return 0;
 }
