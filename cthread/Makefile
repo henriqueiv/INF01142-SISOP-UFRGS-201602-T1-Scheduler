@@ -10,7 +10,7 @@
 # OBSERVAR que as variáveis de ambiente consideram que o Makefile está no diretótio "cthread"
 # 
 
-CC=gcc -g
+CC=gcc -g -w
 LIB_DIR=./lib
 INC_DIR=./include
 BIN_DIR=./bin

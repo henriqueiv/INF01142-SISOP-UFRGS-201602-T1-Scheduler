@@ -18,45 +18,45 @@ csem_t mutex;
 
 
 void* func1(void *arg) {
-    DEBUG_PRINT("inicio thread 1.\n");
+    //DEBUG_PRINT("inicio thread 1.\n");
     if (cwait(&mutex) != 0) {
-        DEBUG_PRINT("T1 Erro: CWAIT\n");
+        //DEBUG_PRINT("T1 Erro: CWAIT\n");
         return 0;
     }
-    DEBUG_PRINT("T1 NA ZONA CRITICA. yield.\n");
+    //DEBUG_PRINT("T1 NA ZONA CRITICA. yield.\n");
     cyield();
     if (csignal(&mutex) != 0) {
-        DEBUG_PRINT("T1 Erro: CSIGNAL\n");
+        //DEBUG_PRINT("T1 Erro: CSIGNAL\n");
         return 0;
     }
-    DEBUG_PRINT("T1 FORA DA ZONA\n");
+    //DEBUG_PRINT("T1 FORA DA ZONA\n");
     // ccreate(func2, NULL);
-    DEBUG_PRINT("Thread 1: criou thread 2 e vai dar yield.\n");
+    //DEBUG_PRINT("Thread 1: criou thread 2 e vai dar yield.\n");
     // cyield();
-    DEBUG_PRINT("fim da thread UM\n");
+    //DEBUG_PRINT("fim da thread UM\n");
     return 0;
 }
 
 // void* func2(void *arg) {
-//     DEBUG_PRINT("inicio thread 2\n");
+//     //DEBUG_PRINT("inicio thread 2\n");
 //     ccreate(func3, NULL);
-//     DEBUG_PRINT("Thread 2: criou thread 3 e vai dar yield.\n");
+//     //DEBUG_PRINT("Thread 2: criou thread 3 e vai dar yield.\n");
 //     cyield();
-//     DEBUG_PRINT("fim da thread DOIS\n");
+//     //DEBUG_PRINT("fim da thread DOIS\n");
 //     return 0;
 // }
 
 void* t2() {
-    DEBUG_PRINT("Executando...\n");
-    DEBUG_PRINT("Finalizada.\n");
+    //DEBUG_PRINT("Executando...\n");
+    //DEBUG_PRINT("Finalizada.\n");
 }
 
 void* t1() {
-    DEBUG_PRINT("Antes de criar thread 2\n");
+    //DEBUG_PRINT("Antes de criar thread 2\n");
     int id2 = ccreate(t2, NULL);
-    DEBUG_PRINT("Depois de criar thread 2, tid: %d\n", id2);
+    //DEBUG_PRINT("Depois de criar thread 2, tid: %d\n", id2);
     cjoin(id2);
-    DEBUG_PRINT("Depois do join na t2..\n");
+    //DEBUG_PRINT("Depois do join na t2..\n");
 }
 
 struct tupla {
@@ -73,38 +73,37 @@ void* print(void* x) {
     print_tupla(par);
     int id = ccreate(print, (void*) &par);
     if (par->x == 0) {
-        DEBUG_PRINT("X == 0\n");
+        //DEBUG_PRINT("X == 0\n");
         printf("%d\n", par->x);
     }
     
-    DEBUG_PRINT("PASSOU\n");
+    //DEBUG_PRINT("PASSOU\n");
     cjoin(id);
     print(par->x-1);
 }
 
-void* printi(void* x) {
-    printf("%d", *(int*) x);
-}
-
-void* hprint() {
-    DEBUG_PRINT("print eu\n");
-}
-
 #define SIZE 10
+int threads[SIZE];
+
+void* printi(void* x) {
+    int index = *(int*) x;
+    printf("%d\n", index);
+    cjoin(threads[index]);
+}
 
 int main(int argc, char *argv[]) {
-    DEBUG_PRINT("Execussstando\n");
+    DEBUG_PRINT("Executando\n");
     
-    int threads[SIZE], i;
+    int i = 0;
     
+    DEBUG_PRINT("Criando %d threads\n", SIZE);
     for (i = 0; i < SIZE; i++) {
-        threads[i] = ccreate(printi, (void*) &i);
+        int x = i;
+        threads[i] = ccreate(printi, (void*) &x);
     }
     
-    for (i = 0; i < SIZE; i++) {
-        cjoin(threads[i]);
-    }
-    
+    DEBUG_PRINT("Efetuando join %d\n", i);
+    cjoin(threads[0]);
     
     /*
      
@@ -117,40 +116,40 @@ int main(int argc, char *argv[]) {
     par->x = 100;
     print(&par);
     
-     DEBUG_PRINT("Criando t1\n");
+     //DEBUG_PRINT("Criando t1\n");
      int id0 = ccreate(t1, NULL);
-     DEBUG_PRINT("Thread 1 criada com tid %d", id0);
+     //DEBUG_PRINT("Thread 1 criada com tid %d", id0);
      
-     DEBUG_PRINT("Efetuando join na t1 de tid %d\n", id0);
+     //DEBUG_PRINT("Efetuando join na t1 de tid %d\n", id0);
      cjoin(id0);
      */
     
-    DEBUG_PRINT("Finalizando...\n");
+    //DEBUG_PRINT("Finalizando...\n");
     
     return 0;
     
     /*
      if (csem_init(&mutex, 1) != 0){
-     DEBUG_PRINT("Erro ao criar MUTEX\n");
+     //DEBUG_PRINT("Erro ao criar MUTEX\n");
      return 0;
      }
      
      ccreate(func1, NULL);
      
      if (cwait(&mutex) != 0) {
-     DEBUG_PRINT("Main Erro: CWAIT\n");
+     //DEBUG_PRINT("Main Erro: CWAIT\n");
      return 0;
      }
      
-     DEBUG_PRINT("Main: ZONA CRITICA. yield.\n");
+     //DEBUG_PRINT("Main: ZONA CRITICA. yield.\n");
      cyield();
      
      if (csignal(&mutex) != 0) {
-     DEBUG_PRINT("Main Erro: CSIGNAL\n");
+     //DEBUG_PRINT("Main Erro: CSIGNAL\n");
      return 0;
      }
      
-     DEBUG_PRINT("MAIN FORA DA ZONA. yield.\n");
+     //DEBUG_PRINT("MAIN FORA DA ZONA. yield.\n");
      cyield();
      */
     
