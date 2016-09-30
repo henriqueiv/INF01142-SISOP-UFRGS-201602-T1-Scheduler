@@ -89,6 +89,7 @@ void* printi(void* x) {
     int index = *(int*) x;
     printf("%d\n", index);
     cjoin(threads[index]);
+    return (NULL);
 }
 
 int main(int argc, char *argv[]) {
@@ -103,7 +104,10 @@ int main(int argc, char *argv[]) {
     }
     
     DEBUG_PRINT("Efetuando join %d\n", i);
-    cjoin(threads[0]);
+    for (i = 0; i < SIZE; i++) {
+        cjoin(threads[i]);
+    }
+    
     
     /*
      
