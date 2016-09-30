@@ -40,7 +40,7 @@
 		62EEAB1D1D8AFD4C00E16610 /* cthread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cthread.h; sourceTree = "<group>"; };
 		62EEAB251D8AFF6600E16610 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		62EEAB271D8B001100E16610 /* cdata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cdata.h; sourceTree = "<group>"; };
-		62EEAB281D8B087F00E16610 /* cthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cthread.c; sourceTree = "<group>"; };
+		62EEAB281D8B087F00E16610 /* cthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = cthread.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		62EEAB2A1D8B0F0300E16610 /* test_ccreate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_ccreate.c; sourceTree = "<group>"; };
 		62EEAB2B1D8B0F0300E16610 /* test_ccreate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test_ccreate.h; sourceTree = "<group>"; };
 		62EEAB2D1D8B0FFA00E16610 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
