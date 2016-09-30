@@ -88,26 +88,24 @@ int threads[SIZE];
 void* printi(void* x) {
     int index = *(int*) x;
     printf("%d\n", index);
-    cjoin(threads[index]);
     return (NULL);
 }
+
 
 int main(int argc, char *argv[]) {
     DEBUG_PRINT("Executando\n");
     
-    int i = 0;
+    int *i = malloc(sizeof(int));
     
     DEBUG_PRINT("Criando %d threads\n", SIZE);
-    for (i = 0; i < SIZE; i++) {
-        int x = i;
-        threads[i] = ccreate(printi, (void*) &x);
+    for (*i = 0; *i < SIZE; (*i)++) {
+        threads[*i] = ccreate(printi, (void*) i);
     }
     
-    DEBUG_PRINT("Efetuando join %d\n", i);
-    for (i = 0; i < SIZE; i++) {
-        cjoin(threads[i]);
+    DEBUG_PRINT("Efetuando join %d\n", *i);
+    for (*i = 0; *i < SIZE; (*i)++) {
+        cjoin(threads[*i]);
     }
-    
     
     /*
      

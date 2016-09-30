@@ -10,6 +10,7 @@
 		52954F9F1D8B14AB00F7E664 /* support.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 52954F9E1D8B14AB00F7E664 /* support.o */; };
 		62211A6C1D9DCD45005CE7DD /* test_cjoin.c in Sources */ = {isa = PBXBuildFile; fileRef = 62211A6A1D9DCD45005CE7DD /* test_cjoin.c */; };
 		62211A6D1D9DCD45005CE7DD /* test_cyield.c in Sources */ = {isa = PBXBuildFile; fileRef = 62211A6B1D9DCD45005CE7DD /* test_cyield.c */; };
+		62211A6F1D9E0264005CE7DD /* test_cwait.c in Sources */ = {isa = PBXBuildFile; fileRef = 62211A6E1D9E0264005CE7DD /* test_cwait.c */; };
 		62EEAB171D8AFD1A00E16610 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB161D8AFD1A00E16610 /* main.c */; };
 		62EEAB261D8AFF6600E16610 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB251D8AFF6600E16610 /* makefile */; };
 		62EEAB291D8B087F00E16610 /* cthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 62EEAB281D8B087F00E16610 /* cthread.c */; };
@@ -35,6 +36,7 @@
 		52954FA01D8B14CF00F7E664 /* support.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		62211A6A1D9DCD45005CE7DD /* test_cjoin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_cjoin.c; sourceTree = "<group>"; };
 		62211A6B1D9DCD45005CE7DD /* test_cyield.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_cyield.c; sourceTree = "<group>"; };
+		62211A6E1D9E0264005CE7DD /* test_cwait.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test_cwait.c; sourceTree = "<group>"; };
 		62EEAB131D8AFD1A00E16610 /* cthread */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cthread; sourceTree = BUILT_PRODUCTS_DIR; };
 		62EEAB161D8AFD1A00E16610 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		62EEAB1D1D8AFD4C00E16610 /* cthread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cthread.h; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 				62EEAB541D8B289900E16610 /* test_cidentify.h */,
 				62211A6A1D9DCD45005CE7DD /* test_cjoin.c */,
 				62211A6B1D9DCD45005CE7DD /* test_cyield.c */,
+				62211A6E1D9E0264005CE7DD /* test_cwait.c */,
 			);
 			path = teste;
 			sourceTree = "<group>";
@@ -204,6 +207,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				62EEAB291D8B087F00E16610 /* cthread.c in Sources */,
+				62211A6F1D9E0264005CE7DD /* test_cwait.c in Sources */,
 				62EEAB2C1D8B0F0300E16610 /* test_ccreate.c in Sources */,
 				62EEAB2E1D8B0FFA00E16610 /* README.md in Sources */,
 				62EEAB261D8AFF6600E16610 /* makefile in Sources */,
